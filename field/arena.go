@@ -167,6 +167,7 @@ func (arena *Arena) LoadSettings() error {
 	game.StageCapacities[game.Stage1] = settings.Stage1Capacity
 	game.StageCapacities[game.Stage2] = settings.Stage2Capacity
 	game.StageCapacities[game.Stage3] = settings.Stage3Capacity
+	game.StageCapacities[game.Stage4] = settings.Stage4Capacity
 
 	return nil
 }

@@ -31,6 +31,7 @@ type ScoreSummary struct {
 	PowerCellPoints          int
 	ControlPanelPoints       int
 	EndgamePoints            int
+	TotalCells 				 int
 	FoulPoints               int
 	Score                    int
 	StagePowerCellsRemaining [3]int
@@ -44,6 +45,7 @@ var StageCapacities = map[Stage]int{
 	Stage1: 9,
 	Stage2: 15,
 	Stage3: 15,
+	Stage4: 0,
 }
 
 // Represents a Stage towards whose capacity scored power cells are counted.
@@ -53,6 +55,7 @@ const (
 	Stage1 Stage = iota
 	Stage2
 	Stage3
+	Stage4
 	StageExtra
 )
 
@@ -80,17 +83,27 @@ func (score *Score) Summarize(opponentFouls []Foul, teleopStarted bool) *ScoreSu
 			summary.InitiationLinePoints += 5
 		}
 	}
+
+	// A int to stor total cells
+	summary.TotalCells = 0
+
 	for i := 0; i < len(score.AutoCellsBottom); i++ {
+		summary.TotalCells += score.AutoCellsBottom[i]
 		summary.AutoPowerCellPoints += 2 * score.AutoCellsBottom[i]
+		summary.TotalCells += score.AutoCellsOuter[i]
 		summary.AutoPowerCellPoints += 4 * score.AutoCellsOuter[i]
+		summary.TotalCells += score.AutoCellsInner[i]
 		summary.AutoPowerCellPoints += 6 * score.AutoCellsInner[i]
 	}
 	summary.AutoPoints = summary.InitiationLinePoints + summary.AutoPowerCellPoints
 
 	// Calculate teleoperated period power cell points.
 	for i := 0; i < len(score.TeleopCellsBottom); i++ {
+		summary.TotalCells += score.TeleopCellsBottom[i]
 		summary.TeleopPowerCellPoints += score.TeleopCellsBottom[i]
+		summary.TotalCells += score.TeleopCellsOuter[i]
 		summary.TeleopPowerCellPoints += 2 * score.TeleopCellsOuter[i]
+		summary.TotalCells += score.TeleopCellsInner[i]
 		summary.TeleopPowerCellPoints += 3 * score.TeleopCellsInner[i]
 	}
 	summary.PowerCellPoints = summary.AutoPowerCellPoints + summary.TeleopPowerCellPoints
@@ -108,6 +121,13 @@ func (score *Score) Summarize(opponentFouls []Foul, teleopStarted bool) *ScoreSu
 		summary.ControlPanelRankingPoint = true
 	}
 
+	//If Stage 4 is set then ignor Stage activate and activate at Setpoint
+	if StageCapacities[3] > 0 {
+		if summary.TotalCells >= StageCapacities[3] {
+			summary.ControlPanelRankingPoint = true
+		}
+	}
+
 	// Calculate endgame points.
 	anyHang := false
 	for _, status := range score.EndgameStatuses {
@@ -121,6 +141,7 @@ func (score *Score) Summarize(opponentFouls []Foul, teleopStarted bool) *ScoreSu
 	if score.RungIsLevel && anyHang {
 		summary.EndgamePoints += 15
 	}
+	
 	summary.EndgameRankingPoint = summary.EndgamePoints >= 65
 
 	// Calculate penalty points.

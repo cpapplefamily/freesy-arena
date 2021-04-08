@@ -33,7 +33,8 @@ CREATE TABLE event_settings (
   warningremainingdurationsec int,
   stage1capacity int,
   stage2capacity int,
-  stage3capacity int
+  stage3capacity int,
+  stage4capacity int
 );
 
 -- +goose Down
