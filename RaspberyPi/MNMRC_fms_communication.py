@@ -60,7 +60,9 @@ GPIO.add_event_detect(lowerCount_Pin,GPIO.RISING,callback=lower_callback, bounce
 
 #Function to wait for a Power Cell to be scored
 def get_Power_Cell_to_Count():
+    global innerCount
     global outerCount
+    global lowerCount
     while(outerCount == 0 and innerCount == 0 and lowerCount == 0):
         one = 1
     return True
