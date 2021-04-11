@@ -11,7 +11,8 @@ GPIO.setmode(GPIO.BOARD)
 FMS_IP = "10.0.100.05"
 FMS_PORT = "8080"
 FMS_SERVER = FMS_IP + ":" + FMS_PORT
-ALLIANCE_COLOR = 'red' # Change accordingly
+#ALLIANCE_COLOR = 'red' # Change accordingly
+ALLIANCE_COLOR = 'blue' # Change accordingly
 USERNAME = 'admin'
 PASSWORD = 'Password1'
 
