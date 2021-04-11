@@ -1,0 +1,24 @@
+## Create the following Directory
+/home.pi/nmnrc/
+
+## Switch to Directory
+cd nmnrc
+
+## Clone Git Repo
+https://github.com/cpapplefamily/cheesy-arena.git
+
+##Switch to Branch
+git checkout NMNRC_April_17_2021
+
+
+
+##add the @lxterminal line to autostart at boot
+/etc/xdg/lxsession/LXDE-pi/autostart
+@lxpanel --profile LXDE-pi
+@pcmanfm --desktop --profile LXDE-pi
+@lxterminal -e python3 /home/pi/nmnrc/cheesy-arena/RaspberryPi/NMNRC_April_17_2021.py
+@xscreensaver -no-splash
+
+##using a terminal install:
+pip3 install websocket_client
+pip3 install websocket
