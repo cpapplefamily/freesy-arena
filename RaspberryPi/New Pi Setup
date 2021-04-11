@@ -1,3 +1,6 @@
+## For Headless uncomment the following line in the /boot/config.txt
+hdmi_force_hotplug=1
+
 ## Create the following Directory
 /home.pi/nmnrc/
 
@@ -21,4 +24,4 @@ git checkout NMNRC_April_17_2021
 
 ##using a terminal install:
 pip3 install websocket_client
-pip3 install websocket
+## Not needed = pip3 install websocket
