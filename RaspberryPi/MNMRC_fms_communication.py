@@ -9,12 +9,12 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 FMS_IP = "10.0.100.05"
-FMS_PORT = "8080"
+FMS_PORT = "12456"
 FMS_SERVER = FMS_IP + ":" + FMS_PORT
 #ALLIANCE_COLOR = 'red' # Change accordingly
 ALLIANCE_COLOR = 'blue' # Change accordingly
-USERNAME = 'admin'
-PASSWORD = 'Password1'
+USERNAME = 'root'
+PASSWORD = 'root'
 
 goal_char_msg_map = {
     "I": '{ "type": "CI" }',
@@ -27,7 +27,7 @@ innerCount = 0
 outerCount = 0
 lowerCount = 0
 
-#GPIO Assinments
+#GPIO Assignments
 innerCount_Pin = 8
 outerCount_Pin = 7
 lowerCount_Pin = 3
@@ -60,7 +60,7 @@ def lower_callback(channel):
 GPIO.add_event_detect(lowerCount_Pin,GPIO.RISING,callback=lower_callback, bouncetime=200)
 
 #Function to wait for a Power Cell to be scored
-def get_Power_Cell_to_Count():
+def get_power_cell_to_count():
     global innerCount
     global outerCount
     global lowerCount
@@ -82,7 +82,7 @@ def get_on_ws_open_callback():
                 global outerCount
                 global lowerCount
                 #Check for any counters that need to be tallied
-                sendData = get_Power_Cell_to_Count()
+                sendData = get_power_cell_to_count()
                 #What Counter?
                 if (outerCount > 0):
                     goal_char = "O"
@@ -98,16 +98,16 @@ def get_on_ws_open_callback():
                     goal_char = ""
                     
                     
-                print(f'Info: recieved "{goal_char}"')
+                print(f'Info: received "{goal_char}"')
 
                 if (goal_char in goal_char_msg_map):
                     print(f'Info: sent {get_msg_from_goal_char(goal_char)}')
                     try:
                         ws.send(get_msg_from_goal_char(goal_char))
-                    except:
+                    except Exception:
                         open_websocket()
                 else:
-                    print('Error: unknown char recieved')
+                    print('Error: unknown char received')
 
         thread.start_new_thread(run, ())
     
@@ -135,6 +135,9 @@ def open_websocket():
     ws.run_forever()
 
 def main():
+    """Loops until a connection is made to the FMS.
+    When connected opens a websocket 
+    """
     #Wait for Network connection to FMS
     while(True):
         print(f'Check Network Connection {FMS_IP}')
@@ -142,7 +145,6 @@ def main():
         if response == 0:
             print(f'{FMS_IP} Found')
         else:
-            pingstatus = "Network Error"
             print("Network Error")
         if(response == 0): break
         time.sleep(2)
@@ -150,4 +152,5 @@ def main():
     print("Open Web Socket")
     open_websocket()
 
-main()
+if __name__ == "__main__":
+    main()

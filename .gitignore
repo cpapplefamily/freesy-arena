@@ -23,7 +23,8 @@ _testmain.go
 
 *.exe
 *.test
-*.db
+# *.db
+db/backups/*
 *.db-journal
 *.out
 .DS_Store
