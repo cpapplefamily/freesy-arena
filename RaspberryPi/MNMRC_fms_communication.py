@@ -11,8 +11,8 @@ GPIO.setmode(GPIO.BOARD)
 FMS_IP = "10.0.100.05"
 FMS_PORT = "8080"
 FMS_SERVER = FMS_IP + ":" + FMS_PORT
-#ALLIANCE_COLOR = 'red' # Change accordingly
-ALLIANCE_COLOR = 'blue' # Change accordingly
+ALLIANCE_COLOR = 'red' # Change accordingly
+#ALLIANCE_COLOR = 'blue' # Change accordingly
 USERNAME = 'root'
 PASSWORD = 'root'
 
@@ -27,12 +27,21 @@ innerCount = 0
 outerCount = 0
 lowerCount = 0
 
-#GPIO Assignments
-innerCount_Pin = 8
-outerCount_Pin = 7
-lowerCount_Pin = 3
+#opto Issolator Channle to GPIO_Pin
+optoIssolator_1 = 7
+optoIssolator_2 = 11
+optoIssolator_3 = 13
+optoIssolator_4 = 15
 
-# Inerner Count Input setup
+#GPIO Assignments
+innerCount_Pin = optoIssolator_1
+outerCount1_Pin = optoIssolator_2
+outerCount2_Pin = optoIssolator_3
+lowerCount_Pin = optoIssolator_4
+
+###############################
+## Inerner Count Input setup ##
+###############################
 GPIO.setup(innerCount_Pin,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 
 def inner_callback(channel):
@@ -41,16 +50,31 @@ def inner_callback(channel):
     
 GPIO.add_event_detect(innerCount_Pin,GPIO.RISING,callback=inner_callback, bouncetime=200)
 
-# Outer Count Input setup
-GPIO.setup(outerCount_Pin,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+##############################
+## Outer Count1 Input setup ##
+##############################
+GPIO.setup(outerCount1_Pin,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 
-def outer_callback(channel):
+def outer1_callback(channel):
     global outerCount
     outerCount += 1
     
-GPIO.add_event_detect(outerCount_Pin,GPIO.RISING,callback=outer_callback, bouncetime=200)
+GPIO.add_event_detect(outerCount1_Pin,GPIO.RISING,callback=outer1_callback, bouncetime=200)
 
-# Lower Count Input setup
+##############################
+## Outer Count2 Input setup ##
+##############################
+GPIO.setup(outerCount2_Pin,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+
+def outer2_callback(channel):
+    global outerCount
+    outerCount += 1
+    
+GPIO.add_event_detect(outerCount2_Pin,GPIO.RISING,callback=outer2_callback, bouncetime=200)
+
+#############################
+## Lower Count Input setup ##
+#############################
 GPIO.setup(lowerCount_Pin,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 
 def lower_callback(channel):
