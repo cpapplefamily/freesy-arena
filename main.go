@@ -12,7 +12,7 @@ import (
 )
 
 const eventDbPath = "./event.db"
-const httpPort = 12456
+const httpPort = 8080 
 
 // Main entry point for the application.
 func main() {
