@@ -70,9 +70,9 @@
           <div class="col-lg-2" data-toggle="tooltip" title="Robot">Rbt</div>
           <div class="col-lg-2" data-toggle="tooltip" title="Bypass/Disable">Byp</div>
         </div>
-        {{template "matchPlayTeam" dict "team" .Match.Blue1 "color" "B" "position" 1 "data" .}}
-        {{template "matchPlayTeam" dict "team" .Match.Blue2 "color" "B" "position" 2 "data" .}}
-        {{template "matchPlayTeam" dict "team" .Match.Blue3 "color" "B" "position" 3 "data" .}}
+        {{template "matchPlayTeam" dict "team" .Match.Blue1 "color" "B" "position" 1 "data" . "bypass" 1}}
+        {{template "matchPlayTeam" dict "team" .Match.Blue2 "color" "B" "position" 2 "data" . "bypass" 2}}
+        {{template "matchPlayTeam" dict "team" .Match.Blue3 "color" "B" "position" 3 "data" . "bypass" 3}}
       </div>
       <div class="col-lg-6 well well-darkred">
         <div class="row form-group">
@@ -82,24 +82,27 @@
           <div class="col-lg-2" data-toggle="tooltip" title="Robot">Rbt</div>
           <div class="col-lg-2" data-toggle="tooltip" title="Bypass/Disable">Byp</div>
         </div>
-        {{template "matchPlayTeam" dict "team" .Match.Red3 "color" "R" "position" 3 "data" .}}
-        {{template "matchPlayTeam" dict "team" .Match.Red2 "color" "R" "position" 2 "data" .}}
-        {{template "matchPlayTeam" dict "team" .Match.Red1 "color" "R" "position" 1 "data" .}}
+        {{template "matchPlayTeam" dict "team" .Match.Red3 "color" "R" "position" 3 "data" . "bypass" 4}}
+        {{template "matchPlayTeam" dict "team" .Match.Red2 "color" "R" "position" 2 "data" . "bypass" 5}}
+        {{template "matchPlayTeam" dict "team" .Match.Red1 "color" "R" "position" 1 "data" . "bypass" 6}}
       </div>
     </div>
     <div class="row text-center">
-      <button type="button" id="startMatch" class="btn btn-success btn-lg btn-match-play"
-          onclick="startMatch();" disabled>
-        Start Match
-      </button>
-      <button type="button" id="abortMatch" class="btn btn-primary btn-lg btn-match-play"
-          onclick="abortMatch();" disabled>
-        Abort Match
-      </button>
-      <button type="button" id="commitResults" class="btn btn-info btn-lg btn-match-play"
-          onclick="confirmCommit({{.IsReplay}});" disabled>
-        Commit Results
-      </button>
+  <button accesskey="s" type="button" id="startMatch" class="btn btn-success btn-lg btn-match-play"
+      onclick="startMatch();" disabled 
+      data-toggle="tooltip" title="Quick Key [Alt]+s">
+    Start Match
+  </button>
+  <button accesskey="a" type="button" id="abortMatch" class="btn btn-primary btn-lg btn-match-play"
+      onclick="abortMatch();" disabled
+      data-toggle="tooltip" title="Quick Key [Alt]+s">
+    Abort Match
+  </button>
+  <button accesskey="c" type="button" id="commitResults" class="btn btn-info btn-lg btn-match-play"
+      onclick="confirmCommit({{.IsReplay}});" disabled
+      data-toggle="tooltip" title="Quick Key [Alt]+s">
+    Commit Results
+  </button>
       <button type="button" id="discardResults" class="btn btn-danger btn-lg btn-match-play"
           onclick="$('#confirmDiscardResults').modal('show');" disabled>
         Discard Results
@@ -291,7 +294,8 @@
   <div class="col-lg-2 col-no-padding"><div class="radio-status"></div></div>
   <div class="col-lg-2 col-no-padding"><div class="robot-status"></div></div>
   <div class="col-lg-2 col-no-padding">
-    <div class="bypass-status" onclick="toggleBypass('{{.color}}{{.position}}');"></div>
+    <div accesskey="{{.bypass}}" class="bypass-status" onclick="toggleBypass('{{.color}}{{.position}}');" 
+    data-toggle="tooltip" title="Quick Key [Alt]+{{.bypass}}"></div>
   </div>
 </div>
 {{end}}
