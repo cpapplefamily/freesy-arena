@@ -98,11 +98,64 @@ var handleRealtimeScore = function(data) {
   $("#" + redSide + "ScoreNumber").text(data.Red.ScoreSummary.Score - data.Red.ScoreSummary.HangarPoints);
   $("#" + blueSide + "ScoreNumber").text(data.Blue.ScoreSummary.Score - data.Blue.ScoreSummary.HangarPoints);
 
+  setCargoText($("#" + redSide + "CargoDisplay"), data.Red.ScoreSummary);
+  $("#" + redSide + "CargoDisplay").css("color", setCargoColor(data.Red.ScoreSummary));
+  $("#" + redSide + "UpperCargo").text(getUpperCargoCount(data.Red.Score));
+  $("#" + redSide + "LowerCargo").text(getLowerCargoCount(data.Red.Score));
   $("#" + redSide + "AutoCargoRemaining").text(data.Red.ScoreSummary.AutoCargoRemaining);
   $("#" + redSide + "TeleopCargoRemaining").text(data.Red.ScoreSummary.TeleopCargoRemaining);
+  setCargoText($("#" + blueSide + "CargoDisplay"), data.Blue.ScoreSummary);
+  $("#" + blueSide + "CargoDisplay").css("color", setCargoColor(data.Blue.ScoreSummary));
+  $("#" + blueSide + "UpperCargo").text(getUpperCargoCount(data.Blue.Score));
+  $("#" + blueSide + "LowerCargo").text(getLowerCargoCount(data.Blue.Score));
   $("#" + blueSide + "AutoCargoRemaining").text(data.Blue.ScoreSummary.AutoCargoRemaining);
   $("#" + blueSide + "TeleopCargoRemaining").text(data.Blue.ScoreSummary.TeleopCargoRemaining);
 };
+
+// Populates the given element on the overlay to represent the given power cell stage.
+var setCargoText = function(element, scoreSummary) {
+  var text = "&nbsp;";
+  var opacity = 1;
+  var c = 255;
+  if (scoreSummary.QuintetAchieved) {
+    text = scoreSummary.CargoCount + "/18" 
+    opacity = 1;//0.4;
+  } else {
+    text = scoreSummary.CargoCount + "/20"
+    opacity = .1;
+  }
+  element.html(text);
+  //element.css("opacity", opacity);
+ 
+};
+
+var setCargoColor = function(scoreSummary) {
+  if (scoreSummary.QuintetAchieved) {
+    if(scoreSummary.CargoBonusRankingPoint){
+      return "Green"
+    } else {
+      return "Yellow"
+    }
+  } else {
+    return "White"
+  }
+}
+
+var getUpperCargoCount = function(score){
+  var value = 0;
+  for (let i = 0; i < 4; i++) {
+    value += score.AutoCargoUpper[i] + score.TeleopCargoUpper[i];
+  }
+  return value;
+}
+
+var getLowerCargoCount = function(score){
+  var value = 0;
+  for (let i = 0; i < 4; i++) {
+    value += score.AutoCargoLower[i] + score.TeleopCargoLower[i];
+  }
+  return value;
+}
 
 // Handles a websocket message to populate the final score data.
 var handleScorePosted = function(data) {

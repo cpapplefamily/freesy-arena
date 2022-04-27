@@ -84,22 +84,24 @@ html {
   color: #fff;
   opacity: 0;
 }
+
+
 .score-fields {
   height: 100%;
   width: 0;
   display: none;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   align-items: center;
   font-family: "FuturaLTBold";
-  font-size: 20px;
+  font-size: 25px;
   line-height: 25px;
   color: #fff;
-  opacity: 0;
+  opacity: .10;
 }
 #matchCircle {
   position: absolute;
-  top: -25px;
+  top: 15px;
   border-radius: 50%;
   width: 150px;
   height: 150px;
