@@ -30,10 +30,27 @@ body {
   border: 1px solid #333;
 }
 #alliance[data-alliance="red"] {
-  background-color: #322;
+  background-color: rgb(160, 63, 63);/* #322; */
 }
 #alliance[data-alliance="blue"] {
-  background-color: #223;
+  background-color: rgb(40, 40, 102);/* #223; */
+}
+#alliance2 {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 25px;
+  border: 1px solid #333;
+}
+#alliance2[data-alliance2="blue"] {
+  /*background-color: #322;*/
+  background-color: rgb(124, 58, 58);
+}
+#alliance2[data-alliance2="red"] {
+  /*background-color: #223;*/
+  background-color: rgb(40, 40, 102);
 }
 #matchName {
   font-size: 2vw;
