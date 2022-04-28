@@ -90,7 +90,9 @@ html {
   font-size: 25px;
   width: 60px;
   color: rgb(0, 0, 0);
+  text-align: center;
   position: relative;
+ 
 }
 
 .score-fields {

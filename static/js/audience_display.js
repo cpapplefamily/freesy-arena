@@ -132,7 +132,7 @@ var setCargoText = function(element, scoreSummary) {
 var setCargoColor = function(scoreSummary) {
   if (scoreSummary.QuintetAchieved) {
     if(scoreSummary.CargoBonusRankingPoint){
-      return "Green"
+      return "Aquamarine"
     } else {
       return "Yellow"
     }
