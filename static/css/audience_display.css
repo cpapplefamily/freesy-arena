@@ -30,7 +30,7 @@ html {
   display: flex;
 }
 .teams {
-  width: 55px;
+  width: 60px;
   height: 100%;
   display: none;
   flex-direction: column;
@@ -65,7 +65,7 @@ html {
 .avatars {
   min-width: 50px;
   height: 100%;
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
@@ -74,7 +74,7 @@ html {
   height: 25px;
 }
 .score-number {
-  width: 130px;
+  width: 135px;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -85,6 +85,13 @@ html {
   opacity: 0;
 }
 
+#cargo-fields{
+  font-family: "FuturaLTBold";
+  font-size: 25px;
+  width: 60px;
+  color: rgb(0, 0, 0);
+  position: relative;
+}
 
 .score-fields {
   height: 100%;

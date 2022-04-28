@@ -27,8 +27,8 @@ var logoUp = "10px";
 var logoDown = $("#logo").css("top");
 var scoreIn = $(".score").css("width");
 var scoreMid = "135px";
-var scoreOut = "255px";
-var scoreFieldsOut = "40px";
+var scoreOut = "400px";//'255px";
+var scoreFieldsOut = "70px";//"40px";
 
 // Handles a websocket message to change which screen is displayed.
 var handleAudienceDisplayMode = function(targetScreen) {
