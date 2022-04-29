@@ -26,8 +26,8 @@ var eventMatchInfoUp = $("#eventMatchInfo").css("height");
 var logoUp = "10px";
 var logoDown = $("#logo").css("top");
 var scoreIn = $(".score").css("width");
-var scoreMid = "135px";
-var scoreOut = "400px";//'255px";
+var scoreMid = "400px";//"135px";
+var scoreOut = scoreMid;//'255px";
 var scoreFieldsOut = "70px";//"40px";
 
 // Handles a websocket message to change which screen is displayed.
