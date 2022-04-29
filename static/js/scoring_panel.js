@@ -40,24 +40,42 @@ var handleMatchTime = function(data) {
 
 // Handles a websocket message to update the realtime scoring fields.
 var handleRealtimeScore = function(data) {
-  var realtimeScore;
+  var realtimeScore1;
+  var realtimeScore2;
   if (alliance === "red") {
-    realtimeScore = data.Red;
+    realtimeScore1 = data.Red;
+    realtimeScore2 = data.Blue;
   } else {
-    realtimeScore = data.Blue;
+    realtimeScore1 = data.Blue;
+    realtimeScore2 = data.Red;
   }
-  var score = realtimeScore.Score;
+  var score1 = realtimeScore1.Score;
+  var score2 = realtimeScore2.Score;
 
+  //Group One Score
   for (var i = 0; i < 3; i++) {
     var i1 = i + 1;
-    $("#taxiStatus" + i1 + ">.value").text(score.TaxiStatuses[i] ? "Yes" : "No");
-    $("#taxiStatus" + i1).attr("data-value", score.TaxiStatuses[i]);
-    $("#endgameStatus" + i1 + ">.value").text(getEndgameStatusText(score.EndgameStatuses[i]));
-    $("#endgameStatus" + i1).attr("data-value", score.EndgameStatuses[i]);
-    $("#autoCargoLower").text(score.AutoCargoLower[0]);
-    $("#autoCargoUpper").text(score.AutoCargoUpper[0]);
-    $("#teleopCargoLower").text(score.TeleopCargoLower[0]);
-    $("#teleopCargoUpper").text(score.TeleopCargoUpper[0]);
+    $("#taxiStatus" + i1 + ">.value").text(score1.TaxiStatuses[i] ? "Yes" : "No");
+    $("#taxiStatus" + i1).attr("data-value", score1.TaxiStatuses[i]);
+    $("#endgameStatus" + i1 + ">.value").text(getEndgameStatusText(score1.EndgameStatuses[i]));
+    $("#endgameStatus" + i1).attr("data-value", score1.EndgameStatuses[i]);
+    $("#autoCargoLower").text(score1.AutoCargoLower[0]);
+    $("#autoCargoUpper").text(score1.AutoCargoUpper[0]);
+    $("#teleopCargoLower").text(score1.TeleopCargoLower[0]);
+    $("#teleopCargoUpper").text(score1.TeleopCargoUpper[0]);
+  }
+
+  //Group Two Score 
+  for (var i = 0; i < 3; i++) {
+    var i1 = i + 1;
+    $("#taxiStatus2" + i1 + ">.value").text(score2.TaxiStatuses[i] ? "Yes" : "No");
+    $("#taxiStatus2" + i1).attr("data-value", score2.TaxiStatuses[i]);
+    $("#endgameStatus2" + i1 + ">.value").text(getEndgameStatusText(score2.EndgameStatuses[i]));
+    $("#endgameStatus2" + i1).attr("data-value", score2.EndgameStatuses[i]);
+    $("#autoCargoLower2").text(score2.AutoCargoLower[0]);
+    $("#autoCargoUpper2").text(score2.AutoCargoUpper[0]);
+    $("#teleopCargoLower2").text(score2.TeleopCargoLower[0]);
+    $("#teleopCargoUpper2").text(score2.TeleopCargoUpper[0]);
   }
 };
 

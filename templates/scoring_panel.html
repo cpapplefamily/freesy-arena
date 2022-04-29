@@ -16,7 +16,7 @@
     </div>
     {{range $i := seq 3}}
       <div>
-        <div id="team{{$i}}" class="team robot-field"></div>
+        <div id="team{{$i}}" class="team robot-field" style="border: none;"></div>
         <div id="taxiStatus{{$i}}" class="boolean robot-field" onclick="handleClick('{{$i}}');">
           <div class="shortcut">{{$i}}</div>
           <div class="value"></div>
@@ -65,13 +65,13 @@
         </div>
         <div>
           <div class="goal-period">Auto</div>
-          {{template "goal2" dict "period" "auto" "level" "Upper" "plus" "W" "minus" "Q"}}
-          {{template "goal2" dict "period" "auto" "level" "Lower" "plus" "S" "minus" "A"}}
+          {{template "goal2" dict "period" "auto" "level" "Upper" "plus" "I" "minus" "U"}}
+          {{template "goal2" dict "period" "auto" "level" "Lower" "plus" "J" "minus" "H"}}
         </div>
         <div>
           <div class="goal-period">Teleop</div>
-          {{template "goal2" dict "period" "teleop" "level" "Upper" "plus" "R" "minus" "E"}}
-          {{template "goal2" dict "period" "teleop" "level" "Lower" "plus" "F" "minus" "D"}}
+          {{template "goal2" dict "period" "teleop" "level" "Upper" "plus" "P" "minus" "O"}}
+          {{template "goal2" dict "period" "teleop" "level" "Lower" "plus" "L" "minus" "K"}}
         </div>
       </div>
     </div>
@@ -109,10 +109,11 @@
   <div class="number-button minus" onclick="handleClick('{{.minus}}');">
     <div class="shortcut">{{.minus}}</div>-<div class="shortcut" style="opacity: 0;">{{.minus}}</div>
   </div>
-  <div id="{{.period}}Cells{{.level}}2"></div>
+  <div id="{{.period}}Cargo{{.level}}2"></div>
   <div class="number-button plus" onclick="handleClick('{{.plus}}');">
     <div class="shortcut">{{.plus}}</div>+<div class="shortcut" style="opacity: 0;">{{.plus}}</div>
   </div>
 </div>
-
 {{end}}
+
+

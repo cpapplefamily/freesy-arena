@@ -118,10 +118,10 @@ var setCargoText = function(element, scoreSummary) {
   var opacity = 1;
   var c = 255;
   if (scoreSummary.QuintetAchieved) {
-    text = scoreSummary.CargoCount + "/18" 
+    text = scoreSummary.CargoCount + "/18" //need to find a way to dynamicaly do this
     opacity = 1;//0.4;
   } else {
-    text = scoreSummary.CargoCount + "/20"
+    text = scoreSummary.CargoCount + "/20" //need to find a way to dynamicaly do this
     opacity = .1;
   }
   element.html(text);
@@ -130,8 +130,9 @@ var setCargoText = function(element, scoreSummary) {
 };
 
 var setCargoColor = function(scoreSummary) {
+  //window.alert(game.QuintetThreshold);
   if (scoreSummary.QuintetAchieved) {
-    if(scoreSummary.CargoBonusRankingPoint){
+    if(scoreSummary.CargoBonusRankingPoint){ 
       return "Aquamarine"
     } else {
       return "Yellow"

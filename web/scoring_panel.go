@@ -61,11 +61,14 @@ func (web *Web) scoringPanelWebsocketHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	var realtimeScore **field.RealtimeScore
+	var realtimeScore1 **field.RealtimeScore
+	var realtimeScore2 **field.RealtimeScore
 	if alliance == "red" {
-		realtimeScore = &web.arena.RedRealtimeScore
+		realtimeScore1 = &web.arena.RedRealtimeScore
+		realtimeScore2 = &web.arena.BlueRealtimeScore
 	} else {
-		realtimeScore = &web.arena.BlueRealtimeScore
+		realtimeScore1 = &web.arena.BlueRealtimeScore
+		realtimeScore2 = &web.arena.RedRealtimeScore
 	}
 
 	ws, err := websocket.NewWebsocket(w, r)
@@ -95,7 +98,8 @@ func (web *Web) scoringPanelWebsocketHandler(w http.ResponseWriter, r *http.Requ
 			return
 		}
 
-		score := &(*realtimeScore).CurrentScore
+		score1 := &(*realtimeScore1).CurrentScore
+		score2 := &(*realtimeScore2).CurrentScore
 		scoreChanged := false
 
 		if command == "commitMatch" {
@@ -110,34 +114,94 @@ func (web *Web) scoringPanelWebsocketHandler(w http.ResponseWriter, r *http.Requ
 			// Handle per-robot scoring fields.
 			if number <= 3 {
 				index := number - 1
-				score.TaxiStatuses[index] = !score.TaxiStatuses[index]
+				score1.TaxiStatuses[index] = !score1.TaxiStatuses[index]
 				scoreChanged = true
 			} else {
 				index := number - 4
-				score.EndgameStatuses[index]++
-				if score.EndgameStatuses[index] == 5 {
-					score.EndgameStatuses[index] = 0
+				score1.EndgameStatuses[index]++
+				if score1.EndgameStatuses[index] == 5 {
+					score1.EndgameStatuses[index] = 0
 				}
 				scoreChanged = true
 			}
 		} else if !web.arena.Plc.IsEnabled() {
 			switch strings.ToUpper(command) {
+				//Auto scoring is from a device running as Red Page
+			case "RL":
+				// Don't read score from counter if not in match :TODO Add TeliopPostMatch
+				if web.arena.MatchState != field.PostMatch && web.arena.MatchState != field.PreMatch {
+					if web.arena.MatchState == field.AutoPeriod || web.arena.MatchState == field.PausePeriod {
+						scoreChanged = incrementGoal(score1.AutoCargoLower[:])
+					}
+					if web.arena.MatchState == field.TeleopPeriod {
+						scoreChanged = incrementGoal(score1.TeleopCargoLower[:])
+					}
+				}
+
+			case "RU":
+				// Don't read score from counter if not in match :TODO Add TeliopPostMatch
+				if web.arena.MatchState != field.PostMatch && web.arena.MatchState != field.PreMatch {
+					if web.arena.MatchState == field.AutoPeriod || web.arena.MatchState == field.PausePeriod {
+						scoreChanged = incrementGoal(score1.AutoCargoUpper[:])
+					}
+					if web.arena.MatchState == field.TeleopPeriod {
+						scoreChanged = incrementGoal(score1.TeleopCargoUpper[:])
+					}
+				}
+			case "BL":
+				// Don't read score from counter if not in match :TODO Add TeliopPostMatch
+				if web.arena.MatchState != field.PostMatch && web.arena.MatchState != field.PreMatch {
+					if web.arena.MatchState == field.AutoPeriod || web.arena.MatchState == field.PausePeriod {
+						scoreChanged = incrementGoal(score2.AutoCargoLower[:])
+					}
+					if web.arena.MatchState == field.TeleopPeriod {
+						scoreChanged = incrementGoal(score2.TeleopCargoLower[:])
+					}
+				}
+			case "BU":
+				// Don't read score from counter if not in match :TODO Add TeliopPostMatch
+				if web.arena.MatchState != field.PostMatch && web.arena.MatchState != field.PreMatch {
+					if web.arena.MatchState == field.AutoPeriod || web.arena.MatchState == field.PausePeriod {
+						scoreChanged = incrementGoal(score2.AutoCargoUpper[:])
+					}
+					if web.arena.MatchState == field.TeleopPeriod {
+						scoreChanged = incrementGoal(score2.TeleopCargoUpper[:])
+					}
+				}
+				//Group One
 			case "Q":
-				scoreChanged = decrementGoal(score.AutoCargoUpper[:])
+				scoreChanged = decrementGoal(score1.AutoCargoUpper[:])
 			case "A":
-				scoreChanged = decrementGoal(score.AutoCargoLower[:])
+				scoreChanged = decrementGoal(score1.AutoCargoLower[:])
 			case "W":
-				scoreChanged = incrementGoal(score.AutoCargoUpper[:])
+				scoreChanged = incrementGoal(score1.AutoCargoUpper[:])
 			case "S":
-				scoreChanged = incrementGoal(score.AutoCargoLower[:])
+				scoreChanged = incrementGoal(score1.AutoCargoLower[:])
 			case "E":
-				scoreChanged = decrementGoal(score.TeleopCargoUpper[:])
+				scoreChanged = decrementGoal(score1.TeleopCargoUpper[:])
 			case "D":
-				scoreChanged = decrementGoal(score.TeleopCargoLower[:])
+				scoreChanged = decrementGoal(score1.TeleopCargoLower[:])
 			case "R":
-				scoreChanged = incrementGoal(score.TeleopCargoUpper[:])
+				scoreChanged = incrementGoal(score1.TeleopCargoUpper[:])
 			case "F":
-				scoreChanged = incrementGoal(score.TeleopCargoLower[:])
+				scoreChanged = incrementGoal(score1.TeleopCargoLower[:])
+				//Group tWO
+			case "U":
+				scoreChanged = decrementGoal(score2.AutoCargoUpper[:])
+			case "H":
+				scoreChanged = decrementGoal(score2.AutoCargoLower[:])
+			case "I":
+				scoreChanged = incrementGoal(score2.AutoCargoUpper[:])
+			case "J":
+				scoreChanged = incrementGoal(score2.AutoCargoLower[:])
+			case "O":
+				scoreChanged = decrementGoal(score2.TeleopCargoUpper[:])
+			case "K":
+				scoreChanged = decrementGoal(score2.TeleopCargoLower[:])
+			case "P":
+				scoreChanged = incrementGoal(score2.TeleopCargoUpper[:])
+			case "L":
+				scoreChanged = incrementGoal(score2.TeleopCargoLower[:])
 			}
 
 		}
