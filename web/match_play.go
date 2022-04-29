@@ -453,6 +453,10 @@ func (web *Web) commitMatchScore(match *model.Match, matchResult *model.MatchRes
 		web.arena.ScorePostedNotifier.Notify()
 	}
 
+	web.arena.AudienceDisplayMode = "score"
+	web.arena.AudienceDisplayModeNotifier.Notify()
+	web.arena.PlaySound("result")
+
 	return nil
 }
 
