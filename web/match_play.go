@@ -117,6 +117,10 @@ func (web *Web) matchPlayLoadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	web.arena.AudienceDisplayMode = "intro"
+	web.arena.AudienceDisplayModeNotifier.Notify()
+	web.arena.PlaySound("result")
+
 	http.Redirect(w, r, "/match_play", 303)
 }
 
@@ -158,6 +162,11 @@ func (web *Web) matchPlayShowResultHandler(w http.ResponseWriter, r *http.Reques
 	web.arena.SavedMatch = match
 	web.arena.SavedMatchResult = matchResult
 	web.arena.ScorePostedNotifier.Notify()
+
+/* 	//Enable Table Show Results
+	web.arena.AudienceDisplayMode = "score"
+	web.arena.AudienceDisplayModeNotifier.Notify()
+	web.arena.PlaySound("result") */
 
 	http.Redirect(w, r, "/match_play", 303)
 }
