@@ -28,6 +28,9 @@ type ScoreSummary struct {
 	Score                   int
 	AutoCargoRemaining      int
 	TeleopCargoRemaining    int
+	QuintetSP    	        int
+	WithQuintetSP    	    int
+	WithoutQuintetSP    	int
 	QuintetAchieved         bool
 	CargoBonusRankingPoint  bool
 	HangarBonusRankingPoint bool
@@ -110,6 +113,10 @@ func (score *Score) Summarize(opponentFouls []Foul) *ScoreSummary {
 		summary.TeleopCargoRemaining = cargoBonusRankingPointThreshold - summary.CargoCount
 	}
 	summary.HangarBonusRankingPoint = summary.HangarPoints >= HangarBonusRankingPointThreshold
+
+	summary.QuintetSP = QuintetThreshold
+	summary.WithQuintetSP = CargoBonusRankingPointThresholdWithQuintet
+	summary.WithoutQuintetSP = CargoBonusRankingPointThresholdWithoutQuintet
 
 	// Calculate penalty points.
 	for _, foul := range opponentFouls {

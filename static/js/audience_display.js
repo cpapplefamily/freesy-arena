@@ -97,7 +97,8 @@ var handleMatchTime = function(data) {
 var handleRealtimeScore = function(data) {
   $("#" + redSide + "ScoreNumber").text(data.Red.ScoreSummary.Score - data.Red.ScoreSummary.HangarPoints);
   $("#" + blueSide + "ScoreNumber").text(data.Blue.ScoreSummary.Score - data.Blue.ScoreSummary.HangarPoints);
-
+  var t = data.AutoCargoRemaining
+  
   setCargoText($("#" + redSide + "CargoDisplay"), data.Red.ScoreSummary);
   $("#" + redSide + "CargoDisplay").css("color", setCargoColor(data.Red.ScoreSummary));
   $("#" + redSide + "UpperCargo").text(getUpperCargoCount(data.Red.Score));
@@ -118,10 +119,14 @@ var setCargoText = function(element, scoreSummary) {
   var opacity = 1;
   var c = 255;
   if (scoreSummary.QuintetAchieved) {
-    text = scoreSummary.CargoCount + "/18" //need to find a way to dynamicaly do this
+    var num = scoreSummary.WithQuintetSP;
+    var x = num.toString();
+    text = scoreSummary.CargoCount + "/" + x //need to find a way to dynamicaly do this
     opacity = 1;//0.4;
   } else {
-    text = scoreSummary.CargoCount + "/20" //need to find a way to dynamicaly do this
+    var num = scoreSummary.WithoutQuintetSP;//20;
+    var x = num.toString();
+    text = scoreSummary.CargoCount + "/" + x //need to find a way to dynamicaly do this
     opacity = .1;
   }
   element.html(text);
