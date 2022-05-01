@@ -163,10 +163,13 @@ var getLowerCargoCount = function(score){
 }
 var redscore = 0;
 var bluescore = 0;
+var finalSeriesStatus;// = data.SeriesStatus;
+
 // Handles a websocket message to populate the final score data.
 var handleScorePosted = function(data) {
   redscore = data.RedScoreSummary.Score;
   bluescore = data.BlueScoreSummary.Score;
+  finalSeriesStatus = data.SeriesStatus;
   $("#" + redSide + "FinalScore").text(data.RedScoreSummary.Score);
   $("#" + redSide + "FinalTeam1").html(getRankingText(data.Match.Red1, data.Rankings) + "" + data.Match.Red1);
   $("#" + redSide + "FinalTeam2").html(getRankingText(data.Match.Red2, data.Rankings) + "" + data.Match.Red2);
@@ -389,6 +392,11 @@ var transitionLogoToBlank = function(callback) {
 };
 
 var transitionLogoToScore = function(callback) {
+  if(finalSeriesStatus ==""){
+    $(".final-rp").show();
+  }else{
+    $(".final-rp").hide();
+  }
   $(".blindsCenter.full").transition({queue: false, top: "-350px"}, 625, "ease");
   $("#finalScore").show();
   $("#finalScore").transition({queue: false, opacity: 1}, 1000, "ease", callback);
