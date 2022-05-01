@@ -215,6 +215,13 @@ html {
   top: 37px;
   height: 250px;
 }
+.final-rp{
+  padding: 20px 0;
+  font-family: "FuturaLTBold";
+  text-align: center;
+  font-size: 100px;
+  color: rgb(0, 0, 0);
+}
 #finalScore {
   position: fixed;
   width: 1200px;

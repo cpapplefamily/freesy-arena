@@ -281,9 +281,9 @@ var transitionBlankToIntro = function(callback) {
 };
 
 var transitionIntroToInMatch = function(callback) {
-  $(".avatars").transition({queue: false, opacity: 0}, 500, "ease", function() {
+  /* $(".avatars").transition({queue: false, opacity: 0}, 500, "ease", function() {
     $(".avatars").hide();
-  });
+  }); */
   $(".score-fields").css("display", "flex");
   $(".score-fields").transition({queue: false, width: scoreFieldsOut}, 500, "ease");
   $("#logo").transition({queue: false, top: logoUp}, 500, "ease");
