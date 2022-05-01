@@ -176,6 +176,7 @@ var handleScorePosted = function(data) {
   $("#" + redSide + "FinalCargoPoints").text(data.RedScoreSummary.CargoPoints);
   $("#" + redSide + "FinalHangarPoints").text(data.RedScoreSummary.HangarPoints);
   $("#" + redSide + "FinalFoulPoints").text(data.RedScoreSummary.FoulPoints);
+  $("#" + redSide + "FinalRP").text(getRPCount(data.RedScoreSummary,data.BlueScoreSummary.Score) + " RP");
   $("#" + redSide + "FinalCargoBonusRankingPoint").html(data.RedScoreSummary.CargoBonusRankingPoint ? "&#x2714;" : "&#x2718;");
   $("#" + redSide + "FinalCargoBonusRankingPoint").attr("data-checked", data.RedScoreSummary.CargoBonusRankingPoint);
   $("#" + redSide + "FinalHangarBonusRankingPoint").html(data.RedScoreSummary.HangarBonusRankingPoint ? "&#x2714;" : "&#x2718;");
@@ -191,6 +192,7 @@ var handleScorePosted = function(data) {
   $("#" + blueSide + "FinalCargoPoints").text(data.BlueScoreSummary.CargoPoints);
   $("#" + blueSide + "FinalHangarPoints").text(data.BlueScoreSummary.HangarPoints);
   $("#" + blueSide + "FinalFoulPoints").text(data.BlueScoreSummary.FoulPoints);
+  $("#" + blueSide + "FinalRP").text(getRPCount(data.BlueScoreSummary,data.RedScoreSummary.Score) + " RP");
   $("#" + blueSide + "FinalCargoBonusRankingPoint").html(data.BlueScoreSummary.CargoBonusRankingPoint ? "&#x2714;" : "&#x2718;");
   $("#" + blueSide + "FinalCargoBonusRankingPoint").attr("data-checked", data.BlueScoreSummary.CargoBonusRankingPoint);
   $("#" + blueSide + "FinalHangarBonusRankingPoint").html(data.BlueScoreSummary.HangarBonusRankingPoint ? "&#x2714;" : "&#x2718;");
@@ -199,6 +201,23 @@ var handleScorePosted = function(data) {
   $("#finalSeriesStatus").attr("data-leader", data.SeriesLeader);
   $("#finalMatchName").text(data.MatchType + " " + data.Match.DisplayName);
 };
+
+var getRPCount = function(scoreSummary, oponentScore) {
+  var count = 0;
+  if (scoreSummary.CargoBonusRankingPoint) {
+    count = count + 1;    
+  }
+  if (scoreSummary.HangarBonusRankingPoint) {
+    count  = count + 1;    
+  }
+  if(scoreSummary.Score > oponentScore){
+    count  = count + 2;
+  }
+  if(scoreSummary.Score == oponentScore){
+    count  = count + 1;
+  }
+  return count;
+}
 
 // Handles a websocket message to play a sound to signal match start/stop/etc.
 var handlePlaySound = function(sound) {

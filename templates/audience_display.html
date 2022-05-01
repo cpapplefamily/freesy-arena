@@ -90,7 +90,7 @@
       </div>
       <div class="blindsCenter full">
         <img id="blindsLogo" src="/static/img/game-logo.png" alt="logo" />
-      </div>
+      </div> 
       <div id="finalScore">
         <div class="final-score reversible-left" id="leftFinalScore"></div>
         <div class="final-score reversible-right" id="rightFinalScore"></div>
@@ -105,6 +105,9 @@
           <div class="final-team" id="rightFinalTeam3"></div><img class="final-avatar" id="rightFinalTeam3Avatar" src="" />
         </div>
         <div class="final-breakdown" id="leftFinalBreakdown">
+          <div class="final-rp">
+            <div id="leftFinalRP"></div>
+          </div>
           <span class="valign-cell">
             <span id="leftFinalTaxiPoints"></span><br />
             <span id="leftFinalCargoPoints"></span><br />
@@ -133,7 +136,11 @@
             <span id="rightFinalCargoBonusRankingPoint"></span><br />
             <span id="rightFinalHangarBonusRankingPoint"></span><br />
           </span>
+          <div class="final-rp">
+            <div id="rightFinalRP"></div>
+          </div>
         </div>
+        
         <div id="finalEventMatchInfo">
           <div class="final-footer">{{.EventSettings.Name}}</div>
           <div class="final-footer" id="finalSeriesStatus">&nbsp;</div>
