@@ -397,7 +397,7 @@ var transitionLogoToScore = function(callback) {
 
 var transitionBlankToScore = function(callback) {
   transitionBlankToLogo(function(){
-    setTimeout(function(){ transitionLogoToWinner(callback); },1500)
+    setTimeout(function(){ transitionLogoToWinner(callback); },500)
   });
 };
 
@@ -409,16 +409,16 @@ var transitionLogoToWinner = function(callback) {
   $("#wincolor").attr("src", "/static/img/" + getWinnerCollor() + ".png");
   $("#winner").show();
   $("#winner").transition({queue: false, opacity: 1}, 1000, "ease", callback);
-  setTimeout(function() { transitionLogoToScore(callback); }, 5000); // Delay Score
+  setTimeout(function() { transitionLogoToScore(callback); }, 2000); // Delay Score
 };
 
 var getWinnerCollor = function(data) {
   if (redscore == bluescore){
-    return "goal"
+    return "winner-tie"
   } else if (redscore > bluescore){
-    return "red"
+    return "winner-red"
   } else {
-    return "blue"
+    return "winner-blue"
   }
 }
 
