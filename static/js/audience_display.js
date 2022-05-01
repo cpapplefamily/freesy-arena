@@ -136,12 +136,11 @@ var setCargoText = function(element, scoreSummary) {
 
 var setCargoColor = function(scoreSummary) {
   //window.alert(game.QuintetThreshold);
+  if(scoreSummary.CargoBonusRankingPoint){ 
+    return "Aquamarine"
+  }
   if (scoreSummary.QuintetAchieved) {
-    if(scoreSummary.CargoBonusRankingPoint){ 
-      return "Aquamarine"
-    } else {
-      return "Yellow"
-    }
+    return "Yellow"
   } else {
     return "White"
   }
@@ -162,9 +161,12 @@ var getLowerCargoCount = function(score){
   }
   return value;
 }
-
+var redscore = 0;
+var bluescore = 0;
 // Handles a websocket message to populate the final score data.
 var handleScorePosted = function(data) {
+  redscore = data.RedScoreSummary.Score;
+  bluescore = data.BlueScoreSummary.Score;
   $("#" + redSide + "FinalScore").text(data.RedScoreSummary.Score);
   $("#" + redSide + "FinalTeam1").html(getRankingText(data.Match.Red1, data.Rankings) + "" + data.Match.Red1);
   $("#" + redSide + "FinalTeam2").html(getRankingText(data.Match.Red2, data.Rankings) + "" + data.Match.Red2);
@@ -390,13 +392,36 @@ var transitionLogoToScore = function(callback) {
   $(".blindsCenter.full").transition({queue: false, top: "-350px"}, 625, "ease");
   $("#finalScore").show();
   $("#finalScore").transition({queue: false, opacity: 1}, 1000, "ease", callback);
+  $("#winner").hide();
 };
 
 var transitionBlankToScore = function(callback) {
-  transitionBlankToLogo(function() {
-    setTimeout(function() { transitionLogoToScore(callback); }, 50);
+  transitionBlankToLogo(function(){
+    setTimeout(function(){ transitionLogoToWinner(callback); },1500)
   });
 };
+
+
+
+var transitionLogoToWinner = function(callback) {
+  
+  //$("#wincolor").attr("src", "/static/img/goal.png");
+  $("#wincolor").attr("src", "/static/img/" + getWinnerCollor() + ".png");
+  $("#winner").show();
+  $("#winner").transition({queue: false, opacity: 1}, 1000, "ease", callback);
+  setTimeout(function() { transitionLogoToScore(callback); }, 5000); // Delay Score
+};
+
+var getWinnerCollor = function(data) {
+  if (redscore == bluescore){
+    return "goal"
+  } else if (redscore > bluescore){
+    return "red"
+  } else {
+    return "blue"
+  }
+}
+
 
 var transitionScoreToLogo = function(callback) {
   $("#finalScore").transition({queue: false, opacity: 0}, 500, "ease", function(){
