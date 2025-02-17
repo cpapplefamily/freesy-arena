@@ -1,0 +1,76 @@
+{{define "all_teams_queue"}}
+{{range $team := .Teams}}
+<div class="col-lg-2 col-md-3 col-sm-4 mb-2">
+  {{template "clickableTeamBox" dict "Id" $team.Id "Nickname" $team.Nickname}}
+</div>
+{{end}}
+
+<!-- Team Modal -->
+<div class="modal fade" id="teamModal" tabindex="-1" aria-labelledby="teamModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="teamModalId"></h5> </br>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Preference goes here, leave empty if no preferences</p>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="red1">
+          <label class="form-check-label" for="red1">Red 1</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="red2">
+          <label class="form-check-label" for="red2">Red 2</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="red3">
+          <label class="form-check-label" for="red3">Red 3</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="redAlliance">
+          <label class="form-check-label" for="redAlliance">Red Alliance</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="blue1">
+          <label class="form-check-label" for="blue1">Blue 1</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="blue2">
+          <label class="form-check-label" for="blue2">Blue 2</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="blue3">
+          <label class="form-check-label" for="blue3">Blue 3</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="blueAlliance">
+          <label class="form-check-label" for="blueAlliance">Blue Alliance</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Add to Queue</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
+
+<!-- Team Selection List -->
+{{define "clickableTeamBox"}}
+<div type="button" class="btn btn-secondary w-100" onclick="openTeamModal('{{.Id}}', '{{.Nickname}}')"
+  style="cursor: pointer;">
+  <div class="team-id text-center">{{.Id}}</div>
+  <div class="team-name text-center">{{.Nickname}}</div>
+</div>
+{{end}}
+
+{{define "script"}}
+<script>
+  function openTeamModal(teamId, teamNickname) {
+    $('#teamModalId').text('Team: ' + teamId + ' - ' + teamNickname);
+    $('#teamModal').modal('show');
+  }
+</script>
+{{end}}

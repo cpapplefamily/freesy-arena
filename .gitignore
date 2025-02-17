@@ -31,3 +31,5 @@ static/logs
 static/img/avatars
 cheesy-arena.exe~
 field/descriptions.csv
+
+.vscode

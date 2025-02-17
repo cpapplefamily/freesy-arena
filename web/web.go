@@ -237,6 +237,10 @@ func (web *Web) newHandler() http.Handler {
 	mux.HandleFunc("POST /freezy/eStopState", web.eStopStatePostHandler)
 	mux.HandleFunc("GET /field_stack_light", web.fieldStackLightGetHandler)
 	mux.HandleFunc("POST /freezy/startMatch", web.startMatchPostHandler)
+	mux.HandleFunc("GET /displays/open_queue", web.openQueueHandler)
+	mux.HandleFunc("GET /displays/open_queue/websocket", web.openQueueWebsocketHandler)
+	mux.HandleFunc("GET /displays/open_queue_kiosk", web.openQueueKioskHandler)
+	mux.HandleFunc("GET /displays/open_queue_kiosk/websocket", web.openQueueKioskWebsocketHandler)
 	return mux
 }
 

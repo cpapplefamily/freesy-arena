@@ -1,0 +1,53 @@
+{{define "queued_teams"}}
+{{range $team := .Teams}}
+<div class="col-lg-6 col-md-6 col-sm-6 mb-2">
+  {{template "clickableTeamBoxQueue" dict "Id" $team.Id "Nickname" $team.Nickname}}
+</div>
+{{end}}
+
+<!-- Team Modal -->
+<div class="modal fade" id="teamModalQueue" tabindex="-1" aria-labelledby="teamModalQueueLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="teamModalQueueTitle"></h5> </br>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Preference goes here:</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" type="button" id="r1_assign">Red 1</button>
+        <button class="btn btn-danger" type="button" id="r2_assign">Red 2</button>
+        <button class="btn btn-danger" type="button" id="r3_assign">Red 3</button>
+        <button class="btn btn-primary" type="button" id="b1_assign">Blue 1</button>
+        <button class="btn btn-primary" type="button" id="b2_assign">Blue 2</button>
+        <button class="btn btn-primary" type="button" id="b3_assign">Blue 3</button>
+      </div>
+    </div>
+  </div>
+  {{end}}
+
+  <!-- Team Selection List -->
+  {{define "clickableTeamBoxQueue"}}
+  <div type="button" class="btn btn-secondary btn-block" style="width:100%" onclick="openTeamQueuedModal('{{.Id}}', '{{.Nickname}}')"
+    style="cursor: pointer;">
+    <div class="team-id text-center">{{.Id}}</div>
+    <div class="team-name text-center">{{.Nickname}}</div>
+  </div>
+  {{end}}
+
+  {{define "script_queue"}}
+  <script>
+    function openTeamQueuedModal(teamId, teamNickname) {
+      $('#teamModalQueueTitle').text('Team: ' + teamId + ' - ' + teamNickname);
+      $('#r1_assign').attr('onclick', `$('#statusR1 .team-number').val('${teamId}').trigger('change');`);
+      $('#r2_assign').attr('onclick', `$('#statusR2 .team-number').val('${teamId}').trigger('change');`);
+      $('#r3_assign').attr('onclick', `$('#statusR3 .team-number').val('${teamId}').trigger('change');`);
+      $('#b1_assign').attr('onclick', `$('#statusB1 .team-number').val('${teamId}').trigger('change');`);
+      $('#b2_assign').attr('onclick', `$('#statusB2 .team-number').val('${teamId}').trigger('change');`);
+      $('#b3_assign').attr('onclick', `$('#statusB3 .team-number').val('${teamId}').trigger('change');`);
+      $('#teamModalQueue').modal('show');
+    }
+  </script>
+  {{end}}
