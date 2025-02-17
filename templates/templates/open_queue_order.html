@@ -17,12 +17,30 @@
         <p>Preference goes here:</p>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-danger" type="button" id="r1_assign">Red 1</button>
-        <button class="btn btn-danger" type="button" id="r2_assign">Red 2</button>
-        <button class="btn btn-danger" type="button" id="r3_assign">Red 3</button>
-        <button class="btn btn-primary" type="button" id="b1_assign">Blue 1</button>
-        <button class="btn btn-primary" type="button" id="b2_assign">Blue 2</button>
-        <button class="btn btn-primary" type="button" id="b3_assign">Blue 3</button>
+        <div class="row">
+          <!-- Current match and next match -->
+          <h4>Current Match</h4>
+          <div class="col-lg-12">
+            <button class="btn btn-danger" type="button" id="r1_assign">Red 1</button>
+            <button class="btn btn-danger" type="button" id="r2_assign">Red 2</button>
+            <button class="btn btn-danger" type="button" id="r3_assign">Red 3</button>
+            <button class="btn btn-primary" type="button" id="b1_assign">Blue 1</button>
+            <button class="btn btn-primary" type="button" id="b2_assign">Blue 2</button>
+            <button class="btn btn-primary" type="button" id="b3_assign">Blue 3</button>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Current match and next match -->
+          <h4>Next Match</h4>
+          <div class="col-lg-12">
+            <button class="btn btn-danger" type="button" id="r1_assignnext">Red 1</button>
+            <button class="btn btn-danger" type="button" id="r2_assignnext">Red 2</button>
+            <button class="btn btn-danger" type="button" id="r3_assignnext">Red 3</button>
+            <button class="btn btn-primary" type="button" id="b1_assignnext">Blue 1</button>
+            <button class="btn btn-primary" type="button" id="b2_assignnext">Blue 2</button>
+            <button class="btn btn-primary" type="button" id="b3_assignnext">Blue 3</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -30,8 +48,8 @@
 
   <!-- Team Selection List -->
   {{define "clickableTeamBoxQueue"}}
-  <div type="button" class="btn btn-secondary btn-block" style="width:100%" onclick="openTeamQueuedModal('{{.Id}}', '{{.Nickname}}')"
-    style="cursor: pointer;">
+  <div type="button" class="btn btn-secondary btn-block" style="width:100%"
+    onclick="openTeamQueuedModal('{{.Id}}', '{{.Nickname}}')" style="cursor: pointer;">
     <div class="team-id text-center">{{.Id}}</div>
     <div class="team-name text-center">{{.Nickname}}</div>
   </div>
@@ -41,12 +59,18 @@
   <script>
     function openTeamQueuedModal(teamId, teamNickname) {
       $('#teamModalQueueTitle').text('Team: ' + teamId + ' - ' + teamNickname);
-      $('#r1_assign').attr('onclick', `$('#statusR1 .team-number').val('${teamId}').trigger('change');`);
-      $('#r2_assign').attr('onclick', `$('#statusR2 .team-number').val('${teamId}').trigger('change');`);
-      $('#r3_assign').attr('onclick', `$('#statusR3 .team-number').val('${teamId}').trigger('change');`);
-      $('#b1_assign').attr('onclick', `$('#statusB1 .team-number').val('${teamId}').trigger('change');`);
-      $('#b2_assign').attr('onclick', `$('#statusB2 .team-number').val('${teamId}').trigger('change');`);
-      $('#b3_assign').attr('onclick', `$('#statusB3 .team-number').val('${teamId}').trigger('change');`);
+      $('#r1_assign').attr('onclick', `$('#statusR1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#r2_assign').attr('onclick', `$('#statusR2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#r3_assign').attr('onclick', `$('#statusR3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#b1_assign').attr('onclick', `$('#statusB1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#b2_assign').attr('onclick', `$('#statusB2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#b3_assign').attr('onclick', `$('#statusB3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#r1_assignnext').attr('onclick', `$('#nextstatusR1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#r2_assignnext').attr('onclick', `$('#nextstatusR2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#r3_assignnext').attr('onclick', `$('#nextstatusR3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#b1_assignnext').attr('onclick', `$('#nextstatusB1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#b2_assignnext').attr('onclick', `$('#nextstatusB2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#b3_assignnext').attr('onclick', `$('#nextstatusB3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
       $('#teamModalQueue').modal('show');
     }
   </script>

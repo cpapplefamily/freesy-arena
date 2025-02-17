@@ -59,7 +59,7 @@
 
 <!-- Team Selection List -->
 {{define "clickableTeamBox"}}
-<div type="button" class="btn btn-secondary w-100" onclick="openTeamModal('{{.Id}}', '{{.Nickname}}')"
+<div type="button" class="w-100 btn btn-secondary btn-block ms-1" onclick="openTeamModal('{{.Id}}', '{{.Nickname}}')"
   style="cursor: pointer;">
   <div class="team-id text-center">{{.Id}}</div>
   <div class="team-name text-center">{{.Nickname}}</div>

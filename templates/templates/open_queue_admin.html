@@ -29,23 +29,24 @@ Display for managing open queue.
     <div class="row">
       <div class="col-md-6">
         <!-- Current match and next match -->
+        <div class="col-lg-5 text-end">{{.EventSettings}}</div>
         <h4>Current Match</h4>
         <div class="row text-center">
           <div class="col-lg-6 card card-body bg-blue mb-2">
             <div class="row mb-3">
               <div class="col-lg-4">Blue Teams</div>
-              {{template "matchPlayTeam" dict "color" "B" "position" 1 "data" . "bypass" 1}}
-              {{template "matchPlayTeam" dict "color" "B" "position" 2 "data" . "bypass" 2}}
-              {{template "matchPlayTeam" dict "color" "B" "position" 3 "data" . "bypass" 3}}
+              {{template "currentMatchPlayTeam" dict "color" "B" "position" 1 "data" .}}
+              {{template "currentMatchPlayTeam" dict "color" "B" "position" 2 "data" .}}
+              {{template "currentMatchPlayTeam" dict "color" "B" "position" 3 "data" .}}
               <div id="playoffBlueAllianceInfo"></div>
             </div>
           </div>
           <div class="col-lg-6 card card-body bg-red mb-2">
             <div class="row mb-3">
               <div class="col-lg-4">Red Teams</div>
-              {{template "matchPlayTeam" dict "color" "R" "position" 3 "data" . "bypass" 4}}
-              {{template "matchPlayTeam" dict "color" "R" "position" 2 "data" . "bypass" 5}}
-              {{template "matchPlayTeam" dict "color" "R" "position" 1 "data" . "bypass" 6}}
+              {{template "currentMatchPlayTeam" dict "color" "R" "position" 3 "data" .}}
+              {{template "currentMatchPlayTeam" dict "color" "R" "position" 2 "data" .}}
+              {{template "currentMatchPlayTeam" dict "color" "R" "position" 1 "data" .}}
               <div id="playoffRedAllianceInfo"></div>
             </div>
           </div>
@@ -55,18 +56,18 @@ Display for managing open queue.
           <div class="col-lg-6 card card-body bg-blue mb-2">
             <div class="row mb-3">
               <div class="col-lg-4">Blue Teams</div>
-              {{template "matchPlayTeam" dict "color" "B" "position" 1 "data" . "bypass" 1}}
-              {{template "matchPlayTeam" dict "color" "B" "position" 2 "data" . "bypass" 2}}
-              {{template "matchPlayTeam" dict "color" "B" "position" 3 "data" . "bypass" 3}}
+              {{template "nextMatchPlayTeam" dict "color" "B" "position" 1 "data" .}}
+              {{template "nextMatchPlayTeam" dict "color" "B" "position" 2 "data" .}}
+              {{template "nextMatchPlayTeam" dict "color" "B" "position" 3 "data" .}}
               <div id="playoffBlueAllianceInfo"></div>
             </div>
           </div>
           <div class="col-lg-6 card card-body bg-red mb-2">
             <div class="row mb-3">
               <div class="col-lg-4">Red Teams</div>
-              {{template "matchPlayTeam" dict "color" "R" "position" 3 "data" . "bypass" 4}}
-              {{template "matchPlayTeam" dict "color" "R" "position" 2 "data" . "bypass" 5}}
-              {{template "matchPlayTeam" dict "color" "R" "position" 1 "data" . "bypass" 6}}
+              {{template "nextMatchPlayTeam" dict "color" "R" "position" 3 "data" .}}
+              {{template "nextMatchPlayTeam" dict "color" "R" "position" 2 "data" .}}
+              {{template "nextMatchPlayTeam" dict "color" "R" "position" 1 "data" .}}
               <div id="playoffRedAllianceInfo"></div>
             </div>
           </div>
@@ -83,7 +84,7 @@ Display for managing open queue.
     </div>
     <div class="row">
       <h3 class="col-lg-5">All Teams</h3>
-      <div class="col-12 d-flex flex-wrap">
+      <div class="col-12 d-flex flex-wrap gap-2">
         <!-- Team List -->
         {{template "all_teams_queue" .}}
       </div>
@@ -102,11 +103,20 @@ Display for managing open queue.
 </html>
 
 <!-- Match Scheduling -->
-{{define "matchPlayTeam"}}
+{{define "currentMatchPlayTeam"}}
 <div class="row mb-2" id="status{{.color}}{{.position}}">
   <div class="col-lg-1">{{.position}} </div>
   <div class="col-lg-12">
     <input type="number" class="team-number form-control" onchange="substituteTeams();">
+  </div>
+</div>
+{{end}}
+
+{{define "nextMatchPlayTeam"}}
+<div class="row mb-2" id="nextstatus{{.color}}{{.position}}">
+  <div class="col-lg-1">{{.position}} </div>
+  <div class="col-lg-12">
+    <input type="number" class="team-number form-control">
   </div>
 </div>
 {{end}}
