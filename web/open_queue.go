@@ -11,6 +11,7 @@ import (
 	"net/http"
 
 	"github.com/Team254/cheesy-arena/model"
+	"github.com/Team254/cheesy-arena/field"
 	"github.com/Team254/cheesy-arena/websocket"
 	"github.com/mitchellh/mapstructure"
 )
@@ -34,7 +35,9 @@ func (web *Web) openQueueHandler(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		*model.EventSettings
 		Teams            []model.Team
-	}{web.arena.EventSettings, teams}
+		MatchState	   field.MatchState
+		
+	}{web.arena.EventSettings, teams, web.arena.MatchState}
 	err = template.ExecuteTemplate(w, "open_queue_admin.html", data)
 	if err != nil {
 		handleWebErr(w, err)

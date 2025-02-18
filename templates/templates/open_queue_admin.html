@@ -22,14 +22,14 @@ Display for managing open queue.
 
 <body>
   <div id="header" class="row justify-content-center">
-    <div class="col-lg-5">Open Queue Admin</div>
-    <div class="col-lg-5 text-end">{{.EventSettings.Name}}</div>
+    <div class="text-start" style="width: 45%; padding-left: 1%;">Open Queue Admin</div>
+    <div id="matchState" class="text-center" style="width: 10%;"></div>
+    <div class="text-end" style="width: 45%; padding-right: 1%;">{{.EventSettings.Name}}</div>
   </div>
   <div class="container">
     <div class="row">
       <div class="col-md-6">
         <!-- Current match and next match -->
-        <div class="col-lg-5 text-end">{{.EventSettings}}</div>
         <h4>Current Match</h4>
         <div class="row text-center">
           <div class="col-lg-6 card card-body bg-blue mb-2">
@@ -97,6 +97,7 @@ Display for managing open queue.
 <script src="/static/js/cheesy-websocket.js"></script>
 <script src="/static/js/lib/jquery.transit.min.js"></script>
 <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
+<script src="/static/js/match_timing.js"></script>
 {{template "script" .}}
 {{template "script_queue" .}}
 
@@ -107,7 +108,7 @@ Display for managing open queue.
 <div class="row mb-2" id="status{{.color}}{{.position}}">
   <div class="col-lg-1">{{.position}} </div>
   <div class="col-lg-12">
-    <input type="number" class="team-number form-control" onchange="substituteTeams();">
+    <input type="number" class="team-number form-control"  onchange="substituteTeams();" disabled>
   </div>
 </div>
 {{end}}
@@ -116,7 +117,7 @@ Display for managing open queue.
 <div class="row mb-2" id="nextstatus{{.color}}{{.position}}">
   <div class="col-lg-1">{{.position}} </div>
   <div class="col-lg-12">
-    <input type="number" class="team-number form-control">
+    <input type="number" class="team-number form-control"  disabled>
   </div>
 </div>
 {{end}}
@@ -132,15 +133,20 @@ Display for managing open queue.
       Blue2: getTeamNumber("B2"),
       Blue3: getTeamNumber("B3"),
     };
-
-    console.log(teams);
-
     websocket.send("substituteTeams", teams);
   };
 
   const getTeamNumber = function (station) {
     const teamId = $(`#status${station} .team-number`).val().trim();
     return teamId ? parseInt(teamId) : 0;
+  }
+  const getTeamNumberNext = function (station) {
+    const teamId = $(`#nextstatus${station} .team-number`).val().trim();
+    return teamId ? parseInt(teamId) : 0;
+  }
+
+  const removeTeamNumberNext = function (station) {
+    $(`#nextstatus${station} .team-number`).val("");
   }
 
   const handleMatchLoad = function (data) {
@@ -153,34 +159,53 @@ Display for managing open queue.
     $.each(data.Teams, function (station, team) {
       const teamId = $(`#status${station} .team-number`);
       teamId.val(team ? team.Id : "");
-      teamId.prop("disabled", !data.AllowSubstitution);
     });
   }
+
+  var handleMatchTime = function(data) {
+  translateMatchTime(data, function(matchState, matchStateText, countdownSec) {
+    $("#matchState").text(matchStateText);
+    if (matchStateText === "PRE-MATCH") {
+      $(".ds-dependent").attr("data-preMatch", "true");
+    } else {
+      $(".ds-dependent").attr("data-preMatch", "false");
+    }
+  });
+};
+
 
   $(function () {
     // Set up the websocket back to the server.
     websocket = new CheesyWebsocket("/displays/open_queue/websocket", {
       matchLoad: function (event) { handleMatchLoad(event.data); },
+      matchTime: function(event) { handleMatchTime(event.data); },
+      matchTiming: function(event) { handleMatchTiming(event.data); },
     });
   });
 
   const moveNextMatchToCurrent = function () {
     const nextMatchTeams = {
-      Red1: getTeamNumber("R1"),
-      Red2: getTeamNumber("R2"),
-      Red3: getTeamNumber("R3"),
-      Blue1: getTeamNumber("B1"),
-      Blue2: getTeamNumber("B2"),
-      Blue3: getTeamNumber("B3"),
+      R1: getTeamNumberNext("R1"),
+      R2: getTeamNumberNext("R2"),
+      R3: getTeamNumberNext("R3"),
+      B1: getTeamNumberNext("B1"),
+      B2: getTeamNumberNext("B2"),
+      B3: getTeamNumberNext("B3"),
     };
 
     // Assuming you have a function to set the current match teams
     setCurrentMatchTeams(nextMatchTeams);
+    removeTeamNumberNext("R1");
+    removeTeamNumberNext("R2");
+    removeTeamNumberNext("R3");
+    removeTeamNumberNext("B1");
+    removeTeamNumberNext("B2");
+    removeTeamNumberNext("B3");
   };
 
   const setCurrentMatchTeams = function (teams) {
     $.each(teams, function (station, team) {
-      $(`#status${station} .team-number`).val(team);
+      $(`#status${station} .team-number`).val(team).trigger('change');
     });
   };
 </script>
