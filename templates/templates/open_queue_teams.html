@@ -14,44 +14,24 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <form id="queueForm">
         <p>Preference goes here, leave empty if no preferences</p>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="red1">
-          <label class="form-check-label" for="red1">Red 1</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="red2">
-          <label class="form-check-label" for="red2">Red 2</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="red3">
-          <label class="form-check-label" for="red3">Red 3</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="redAlliance">
-          <label class="form-check-label" for="redAlliance">Red Alliance</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="blue1">
-          <label class="form-check-label" for="blue1">Blue 1</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="blue2">
-          <label class="form-check-label" for="blue2">Blue 2</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="blue3">
-          <label class="form-check-label" for="blue3">Blue 3</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="blueAlliance">
-          <label class="form-check-label" for="blueAlliance">Blue Alliance</label>
-        </div>
+        <label for="teamId">Team ID:</label>
+        <input type="number" id="teamId" name="teamId" class="form-control" required disabled>
+        <input class="form-check-input" type="checkbox" id="red1"> Red 1<br>
+        <input class="form-check-input" type="checkbox" id="red2"> Red 2<br>
+        <input class="form-check-input" type="checkbox" id="red3"> Red 3<br>
+        <input class="form-check-input" type="checkbox" id="redAlliance"> Red Alliance<br>
+        <input class="form-check-input" type="checkbox" id="blue1"> Blue 1<br>
+        <input class="form-check-input" type="checkbox" id="blue2"> Blue 2<br>
+        <input class="form-check-input" type="checkbox" id="blue3"> Blue 3<br>
+        <input class="form-check-input" type="checkbox" id="blueAlliance"> Blue Alliance<br>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Add to Queue</button>
+        <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Add to Queue</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
@@ -68,9 +48,40 @@
 
 {{define "script"}}
 <script>
+  var websocket;
   function openTeamModal(teamId, teamNickname) {
     $('#teamModalId').text('Team: ' + teamId + ' - ' + teamNickname);
+    $('#teamId').val(teamId);
     $('#teamModal').modal('show');
   }
+
+  document.getElementById('queueForm').addEventListener('submit', function(event) {
+    console.log("Form submitted");
+    event.preventDefault(); // Prevent default form submission
+    const team = {
+      TeamId: parseInt(document.getElementById('teamId').value, 10),
+      RedPreference: document.getElementById('redAlliance').checked,
+      BluePreference: document.getElementById('blueAlliance').checked,
+      Red1Preference: document.getElementById('red1').checked,
+      Red2Preference: document.getElementById('red2').checked,
+      Red3Preference: document.getElementById('red3').checked,
+      Blue1Preference: document.getElementById('blue1').checked,
+      Blue2Preference: document.getElementById('blue2').checked,
+      Blue3Preference: document.getElementById('blue3').checked,
+    };
+    websocket.send("addTeamQueue", team);
+    $('#myModal').modal('hide'); // Hide the modal
+    document.getElementById('queueForm').reset();
+  });
+
+  $(function () {
+    // Set up the websocket back to the server.
+    websocket = new CheesyWebsocket("/displays/open_queue/websocket", {
+      matchLoad: function (event) { handleMatchLoad(event.data); },
+      matchTime: function(event) { handleMatchTime(event.data); },
+      matchTiming: function(event) { handleMatchTiming(event.data); },
+    });
+  });
+
 </script>
 {{end}}

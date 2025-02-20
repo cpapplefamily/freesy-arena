@@ -6,12 +6,13 @@
 package web
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 
-	"github.com/Team254/cheesy-arena/model"
 	"github.com/Team254/cheesy-arena/field"
+	"github.com/Team254/cheesy-arena/model"
 	"github.com/Team254/cheesy-arena/websocket"
 	"github.com/mitchellh/mapstructure"
 )
@@ -76,7 +77,7 @@ func (web *Web) openQueueWebsocketHandler(w http.ResponseWriter, r *http.Request
 			log.Println(err)
 			return
 		}
-
+		fmt.Println(command)
 		if command == "substituteTeams" {
 			args := struct {
 				Red1  int
@@ -92,6 +93,41 @@ func (web *Web) openQueueWebsocketHandler(w http.ResponseWriter, r *http.Request
 				continue
 			}
 			err = web.arena.SubstituteTeams(args.Red1, args.Red2, args.Red3, args.Blue1, args.Blue2, args.Blue3)
+			if err != nil {
+				ws.WriteError(err.Error())
+				continue
+			}
+		} else if command == "addTeamQueue" {
+			args := model.QueueItem{}
+			err = mapstructure.Decode(data, &args)
+			if err != nil {
+				ws.WriteError(err.Error())
+				continue
+			}
+			queue_team, _ := web.arena.Database.GetQueueItemById(args.TeamId)
+			if queue_team != nil {
+				fmt.Print("Updating Queue Item")
+				err = web.arena.Database.UpdateQueueItem(&args)
+				if err != nil {
+					ws.WriteError(err.Error())
+					continue
+				}
+			} else {
+				fmt.Print("Creating Queue Item")
+				err = web.arena.Database.CreateQueueItem(&args)
+				if err != nil {
+					ws.WriteError(err.Error())
+					continue
+				}
+		}
+		} else if command == "removeTeamQueue" {
+			args := model.QueueItem{}
+			err = mapstructure.Decode(data, &args)
+			if err != nil {
+				ws.WriteError(err.Error())
+				continue
+			}
+			err = web.arena.Database.DeleteQueueItem(args.TeamId)
 			if err != nil {
 				ws.WriteError(err.Error())
 				continue
