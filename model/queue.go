@@ -4,6 +4,7 @@ import "sort"
 
 type QueueItem struct {
 	TeamId          int `db:"id,manual"`
+	Nickname        string
 	RedPreference   bool
 	BluePreference  bool
 	Red1Preference  bool

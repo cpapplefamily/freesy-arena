@@ -60,6 +60,7 @@
     event.preventDefault(); // Prevent default form submission
     const team = {
       TeamId: parseInt(document.getElementById('teamId').value, 10),
+      Nickname: document.getElementById('teamModalId').textContent.split(' - ')[1],
       RedPreference: document.getElementById('redAlliance').checked,
       BluePreference: document.getElementById('blueAlliance').checked,
       Red1Preference: document.getElementById('red1').checked,

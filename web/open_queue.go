@@ -28,7 +28,7 @@ func (web *Web) openQueueHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	template, err := web.parseFiles("templates/templates/open_queue_order.html", "templates/templates/open_queue_teams.html", "templates/templates/open_queue_admin.html")
+	template, err := web.parseFiles("templates/templates/open_queue_teams.html", "templates/templates/open_queue_admin.html")
 	if err != nil {
 		handleWebErr(w, err)
 		return
@@ -40,6 +40,32 @@ func (web *Web) openQueueHandler(w http.ResponseWriter, r *http.Request) {
 		
 	}{web.arena.EventSettings, teams, web.arena.MatchState}
 	err = template.ExecuteTemplate(w, "open_queue_admin.html", data)
+	if err != nil {
+		handleWebErr(w, err)
+		return
+	}
+}
+
+func (web *Web) openQueueQueueLoadHandler(w http.ResponseWriter, r *http.Request) {
+	queue_teams, err := web.arena.Database.GetAllQueueItems()
+	if err != nil {
+		handleWebErr(w, err)
+		return
+	}
+
+	
+	template, err := web.parseFiles("templates/templates/open_queue_order.html")
+	if err != nil {
+		handleWebErr(w, err)
+		return
+	}
+
+	data := struct {
+		QueueTeams           []model.QueueItem
+	}{
+		queue_teams,
+	}
+	err = template.ExecuteTemplate(w, "open_queue_order.html", data)
 	if err != nil {
 		handleWebErr(w, err)
 		return
@@ -64,7 +90,7 @@ func (web *Web) openQueueWebsocketHandler(w http.ResponseWriter, r *http.Request
 	// Subscribe the websocket to the notifiers whose messages will be passed on to the client, in a separate goroutine.
 	go ws.HandleNotifiers(web.arena.MatchTimingNotifier, display.Notifier, web.arena.ArenaStatusNotifier,
 		web.arena.EventStatusNotifier, web.arena.RealtimeScoreNotifier, web.arena.MatchTimeNotifier,
-		web.arena.MatchLoadNotifier, web.arena.ReloadDisplaysNotifier)
+		web.arena.MatchLoadNotifier, web.arena.ReloadDisplaysNotifier, web.arena.QueueLoadNotifier)
 
 	// Loop, waiting for commands and responding to them, until the client closes the connection.
 	for {
@@ -77,7 +103,6 @@ func (web *Web) openQueueWebsocketHandler(w http.ResponseWriter, r *http.Request
 			log.Println(err)
 			return
 		}
-		fmt.Println(command)
 		if command == "substituteTeams" {
 			args := struct {
 				Red1  int
@@ -106,21 +131,21 @@ func (web *Web) openQueueWebsocketHandler(w http.ResponseWriter, r *http.Request
 			}
 			queue_team, _ := web.arena.Database.GetQueueItemById(args.TeamId)
 			if queue_team != nil {
-				fmt.Print("Updating Queue Item")
 				err = web.arena.Database.UpdateQueueItem(&args)
 				if err != nil {
 					ws.WriteError(err.Error())
 					continue
 				}
 			} else {
-				fmt.Print("Creating Queue Item")
 				err = web.arena.Database.CreateQueueItem(&args)
 				if err != nil {
 					ws.WriteError(err.Error())
 					continue
 				}
+				web.arena.QueueLoadNotifier.Notify()
 		}
 		} else if command == "removeTeamQueue" {
+			fmt.Print("Removing Queue Item")
 			args := model.QueueItem{}
 			err = mapstructure.Decode(data, &args)
 			if err != nil {
@@ -132,6 +157,7 @@ func (web *Web) openQueueWebsocketHandler(w http.ResponseWriter, r *http.Request
 				ws.WriteError(err.Error())
 				continue
 			}
+			web.arena.QueueLoadNotifier.Notify()
 		}
 	}
 }

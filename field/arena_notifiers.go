@@ -30,6 +30,7 @@ type ArenaNotifiers struct {
 	ReloadDisplaysNotifier             *websocket.Notifier
 	ScorePostedNotifier                *websocket.Notifier
 	ScoringStatusNotifier              *websocket.Notifier
+	QueueLoadNotifier                  *websocket.Notifier
 }
 
 type MatchTimeMessage struct {
@@ -64,6 +65,7 @@ func (arena *Arena) configureNotifiers() {
 	arena.ReloadDisplaysNotifier = websocket.NewNotifier("reload", nil)
 	arena.ScorePostedNotifier = websocket.NewNotifier("scorePosted", arena.GenerateScorePostedMessage)
 	arena.ScoringStatusNotifier = websocket.NewNotifier("scoringStatus", arena.generateScoringStatusMessage)
+	arena.QueueLoadNotifier = websocket.NewNotifier("queueLoad", arena.GenerateQueueLoadMessage)
 }
 
 func (arena *Arena) generateAllianceSelectionMessage() any {
@@ -361,4 +363,10 @@ func getRulesViolated(redFouls, blueFouls []game.Foul) map[int]*game.Rule {
 		rules[foul.RuleId] = game.GetRuleById(foul.RuleId)
 	}
 	return rules
+}
+
+
+func (arena *Arena) GenerateQueueLoadMessage() any {
+	queueTeams, _ := arena.Database.GetAllQueueItems()
+	return queueTeams
 }

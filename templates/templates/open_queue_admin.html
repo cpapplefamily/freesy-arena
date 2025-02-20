@@ -84,7 +84,7 @@ TODO: Queue Model (Order and preferences)
       <div class="col-md-6">
         <!-- Current Queue -->
         <h3 class="col-lg-5">Current Queue</h3>
-        {{template "queued_teams" .}}
+        <div id="queue"></div>
       </div>
     </div>
     <div class="row">
@@ -104,7 +104,6 @@ TODO: Queue Model (Order and preferences)
 <script src="/static/js/lib/bootstrap.bundle.min.js"></script>
 <script src="/static/js/match_timing.js"></script>
 {{template "script" .}}
-{{template "script_queue" .}}
 
 </html>
 
@@ -178,6 +177,14 @@ TODO: Queue Model (Order and preferences)
   });
 };
 
+  var handleQueueLoad = function(data) {
+    console.log("Queue Load");
+    fetch("/displays/open_queue/queue_load")
+      .then(response => response.text())
+      .then(html => $("#queue").html(html));
+  };
+
+
 
   $(function () {
     // Set up the websocket back to the server.
@@ -185,6 +192,7 @@ TODO: Queue Model (Order and preferences)
       matchLoad: function (event) { handleMatchLoad(event.data); },
       matchTime: function(event) { handleMatchTime(event.data); },
       matchTiming: function(event) { handleMatchTiming(event.data); },
+      queueLoad: function(event) { handleQueueLoad(event.data); },
     });
   });
 

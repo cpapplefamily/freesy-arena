@@ -1,7 +1,6 @@
-{{define "queued_teams"}}
-{{range $team := .Teams}}
+{{range $i, $team := .QueueTeams}}
 <div class="col-lg-6 col-md-6 col-sm-6 mb-2">
-  {{template "clickableTeamBoxQueue" dict "Id" $team.Id "Nickname" $team.Nickname}}
+  {{template "clickableTeamBoxQueue" dict "Id" $team.TeamId "Nickname" $team.Nickname}}
 </div>
 {{end}}
 
@@ -50,7 +49,6 @@
       </div>
     </div>
   </div>
-  {{end}}
 
   <!-- Team Selection List -->
   {{define "clickableTeamBoxQueue"}}
@@ -61,23 +59,27 @@
   </div>
   {{end}}
 
-  {{define "script_queue"}}
   <script>
+    function removeFromQueue(teamId) {
+      // TODO: Remove team from queue
+      console.log("Remove from Queue: " + teamId);
+    }
+
     function openTeamQueuedModal(teamId, teamNickname) {
       $('#teamModalQueueTitle').text('Team: ' + teamId + ' - ' + teamNickname);
-      $('#r1_assign').attr('onclick', `$('#statusR1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#r2_assign').attr('onclick', `$('#statusR2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#r3_assign').attr('onclick', `$('#statusR3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#b1_assign').attr('onclick', `$('#statusB1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#b2_assign').attr('onclick', `$('#statusB2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#b3_assign').attr('onclick', `$('#statusB3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#r1_assignnext').attr('onclick', `$('#nextstatusR1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#r2_assignnext').attr('onclick', `$('#nextstatusR2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#r3_assignnext').attr('onclick', `$('#nextstatusR3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#b1_assignnext').attr('onclick', `$('#nextstatusB1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#b2_assignnext').attr('onclick', `$('#nextstatusB2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
-      $('#b3_assignnext').attr('onclick', `$('#nextstatusB3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide');`);
+      $('#r1_assign').attr('onclick', `$('#statusR1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#r2_assign').attr('onclick', `$('#statusR2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#r3_assign').attr('onclick', `$('#statusR3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#b1_assign').attr('onclick', `$('#statusB1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#b2_assign').attr('onclick', `$('#statusB2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#b3_assign').attr('onclick', `$('#statusB3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#r1_assignnext').attr('onclick', `$('#nextstatusR1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#r2_assignnext').attr('onclick', `$('#nextstatusR2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#r3_assignnext').attr('onclick', `$('#nextstatusR3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#b1_assignnext').attr('onclick', `$('#nextstatusB1 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#b2_assignnext').attr('onclick', `$('#nextstatusB2 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#b3_assignnext').attr('onclick', `$('#nextstatusB3 .team-number').val('${teamId}').trigger('change'); $('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
+      $('#remove_queue').attr('onclick', `$('#teamModalQueue').modal('hide'); removeFromQueue('${teamId}');`);
       $('#teamModalQueue').modal('show');
     }
   </script>
-  {{end}}
