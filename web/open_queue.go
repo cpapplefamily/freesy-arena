@@ -6,7 +6,7 @@
 package web
 
 import (
-	"fmt"
+	"time"
 	"io"
 	"log"
 	"net/http"
@@ -131,12 +131,14 @@ func (web *Web) openQueueWebsocketHandler(w http.ResponseWriter, r *http.Request
 			}
 			queue_team, _ := web.arena.Database.GetQueueItemById(args.TeamId)
 			if queue_team != nil {
+				args.QueueTime = queue_team.QueueTime
 				err = web.arena.Database.UpdateQueueItem(&args)
 				if err != nil {
 					ws.WriteError(err.Error())
 					continue
 				}
 			} else {
+				args.QueueTime = time.Now()
 				err = web.arena.Database.CreateQueueItem(&args)
 				if err != nil {
 					ws.WriteError(err.Error())
@@ -145,7 +147,6 @@ func (web *Web) openQueueWebsocketHandler(w http.ResponseWriter, r *http.Request
 				web.arena.QueueLoadNotifier.Notify()
 		}
 		} else if command == "removeTeamQueue" {
-			fmt.Print("Removing Queue Item")
 			args := model.QueueItem{}
 			err = mapstructure.Decode(data, &args)
 			if err != nil {

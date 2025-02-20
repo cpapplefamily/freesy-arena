@@ -1,9 +1,11 @@
 package model
 
 import "sort"
+import "time"
 
 type QueueItem struct {
 	TeamId          int `db:"id,manual"`
+	QueueTime	   	time.Time
 	Nickname        string
 	RedPreference   bool
 	BluePreference  bool
@@ -41,7 +43,7 @@ func (database *Database) GetAllQueueItems() ([]QueueItem, error) {
 		return nil, err
 	}
 	sort.Slice(queue_item, func(i, j int) bool {
-		return queue_item[i].TeamId < queue_item[j].TeamId
+		return queue_item[i].QueueTime.Before(queue_item[j].QueueTime)
 	})
 	return queue_item, nil
 }

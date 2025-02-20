@@ -1,6 +1,6 @@
 {{range $i, $team := .QueueTeams}}
 <div class="col-lg-6 col-md-6 col-sm-6 mb-2">
-  {{template "clickableTeamBoxQueue" dict "Id" $team.TeamId "Nickname" $team.Nickname}}
+  {{template "clickableTeamBoxQueue" $team}}
 </div>
 {{end}}
 
@@ -11,9 +11,6 @@
       <div class="modal-header">
         <h5 class="modal-title" id="teamModalQueueTitle"></h5> </br>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Preference goes here:</p>
       </div>
       <div class="modal-footer">
         <div class="row">
@@ -53,9 +50,18 @@
   <!-- Team Selection List -->
   {{define "clickableTeamBoxQueue"}}
   <div type="button" class="btn btn-secondary btn-block" style="width:100%"
-    onclick="openTeamQueuedModal('{{.Id}}', '{{.Nickname}}')" style="cursor: pointer;">
-    <div class="team-id text-center">{{.Id}}</div>
+    onclick="openTeamQueuedModal('{{.TeamId}}', '{{.Nickname}}')" style="cursor: pointer;">
+    <div class="team-id text-center">{{.TeamId}}</div>
     <div class="team-name text-center">{{.Nickname}}</div>
+    Preferences:
+    {{if .Blue1Preference}} Blue1,{{end}}
+    {{if .Blue2Preference}} Blue2,{{end}}
+    {{if .Blue3Preference}} Blue3,{{end}}
+    {{if .Red1Preference}} Red1,{{end}}
+    {{if .Red2Preference}} Red2,{{end}}
+    {{if .Red3Preference}} Red3,{{end}}
+    {{if .RedPreference}} Red Alliance,{{end}}
+    {{if .BluePreference}} Blue Alliance,{{end}}
   </div>
   {{end}}
 
@@ -63,6 +69,10 @@
     function removeFromQueue(teamId) {
       // TODO: Remove team from queue
       console.log("Remove from Queue: " + teamId);
+      const team = {
+        "teamId": parseInt(teamId, 10)
+      };
+      websocket.send("removeTeamQueue", team);
     }
 
     function openTeamQueuedModal(teamId, teamNickname) {
