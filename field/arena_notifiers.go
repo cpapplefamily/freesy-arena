@@ -29,6 +29,10 @@ type ArenaNotifiers struct {
 	ReloadDisplaysNotifier             *websocket.Notifier
 	ScorePostedNotifier                *websocket.Notifier
 	ScoringStatusNotifier              *websocket.Notifier
+
+	//notify driver station displays about a/e stop trip
+	StationTripNotifier					*websocket.Notifier
+
 }
 
 type MatchTimeMessage struct {
@@ -61,6 +65,9 @@ func (arena *Arena) configureNotifiers() {
 	arena.ReloadDisplaysNotifier = websocket.NewNotifier("reload", nil)
 	arena.ScorePostedNotifier = websocket.NewNotifier("scorePosted", arena.GenerateScorePostedMessage)
 	arena.ScoringStatusNotifier = websocket.NewNotifier("scoringStatus", arena.generateScoringStatusMessage)
+
+	//notify driver station displays about a/e stop trip
+	arena.StationTripNotifier = websocket.NewNotifier("stationTrip", nil)
 }
 
 func (arena *Arena) generateAllianceSelectionMessage() any {
@@ -357,4 +364,22 @@ func getRulesViolated(redFouls, blueFouls []game.Foul) map[int]*game.Rule {
 		rules[foul.RuleId] = game.GetRuleById(foul.RuleId)
 	}
 	return rules
+}
+
+// notifies websocket of changes in a/e stop outside of match
+func (arena *Arena) NotifyStationTripStatus() {
+	matchInProgress := arena.MatchState != PreMatch &&
+		arena.MatchState != StartMatch &&
+		arena.MatchState != PostMatch &&
+		arena.MatchState != TimeoutActive &&
+		arena.MatchState != PostTimeout
+
+	for id, station := range arena.AllianceStations {
+		arena.StationTripNotifier.NotifyWithMessage(map[string]any{
+			"StationId":        id,
+			"AStopTripped":     station.AStop,
+			"EStopTripped":     station.EStop,
+			"MatchInProgress":  matchInProgress,
+		})
+	}
 }

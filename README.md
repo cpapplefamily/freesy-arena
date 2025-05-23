@@ -85,7 +85,7 @@ Cheesy Arena is far from finished! You can help by:
 ## Acknowledgements
 [Several folks](https://github.com/Team254/cheesy-arena/graphs/contributors) have contributed pull requests. Thanks!
 
-In addition, the following individuals have contributed to make Cheesy Arena a reality:
+In addition, the following individuals have contributed to make Freezy Arena a reality:
 
 * Tom Bottiglieri
 * James Cerar
@@ -103,3 +103,5 @@ In addition, the following individuals have contributed to make Cheesy Arena a r
 * Ken Schenke
 * Austin Schuh
 * Colin Wilson
+* Corey Applegate
+* Justin Fischer

@@ -670,6 +670,10 @@ func (arena *Arena) Update() {
 
 	arena.LastMatchTimeSec = matchTimeSec
 	arena.lastMatchState = arena.MatchState
+
+	// Handle notifying DS about A/E stop trip
+	arena.NotifyStationTripStatus()
+
 }
 
 // Loops indefinitely to track and update the arena components.

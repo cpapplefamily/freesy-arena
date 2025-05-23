@@ -232,6 +232,12 @@ func (web *Web) newHandler() http.Handler {
 	mux.HandleFunc("GET /setup/teams/generate_wpa_keys", web.teamsGenerateWpaKeysHandler)
 	mux.HandleFunc("GET /setup/teams/progress", web.teamsUpdateProgressBarHandler)
 	mux.HandleFunc("GET /setup/teams/refresh", web.teamsRefreshHandler)
+
+	//handle practice match addition
+	mux.HandleFunc("GET /admin/add_practice_match", web.addPracticeMatchGetHandler)
+	mux.HandleFunc("POST /admin/add_practice_match", web.addPracticeMatchPostHandler)
+	mux.HandleFunc("POST /admin/edit_practice_match", web.editPracticeMatchHandler)
+
 	return mux
 }
 
