@@ -9,12 +9,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	"log"
 
 	"github.com/Team254/cheesy-arena/model"
 )
@@ -59,8 +59,8 @@ func (web *Web) settingsPostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("setup_settings.go eventSettings.ElimType: double")
 		numAlliances, _ = strconv.Atoi(r.PostFormValue("numPlayoffAlliances"))
 		log.Printf("setup_settings.go numAlliances: %v", numAlliances)
-		
-		if  numAlliances < 3 || numAlliances > 8 {
+
+		if numAlliances < 3 || numAlliances > 8 {
 			web.renderSettings(w, r, "Number of alliances For Double Must be between 3 and 8.")
 			return
 		}

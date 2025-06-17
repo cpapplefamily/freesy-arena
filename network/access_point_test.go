@@ -5,11 +5,12 @@ package network
 
 import (
 	"encoding/json"
-	"github.com/Team254/cheesy-arena/model"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/Team254/cheesy-arena/model"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAccessPoint_ConfigureTeamWifi(t *testing.T) {

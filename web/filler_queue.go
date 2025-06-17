@@ -1,3 +1,7 @@
+// Author: justin.d.fischer@icloud.com
+//
+// Web handlers for the filler queue panel
+
 package web
 
 import (
@@ -38,14 +42,28 @@ func (web *Web) addPracticeMatchGetHandler(w http.ResponseWriter, r *http.Reques
 		teamMap[team.Id] = &team
 	}
 
+	// Default time: now + 15min
+	editMatchTime := time.Now().Add(15 * time.Minute).Format("2006-01-02T15:04")
+
+	// If a matchId is in the query string, get the match time from DB
+	if matchIdStr := r.URL.Query().Get("matchId"); matchIdStr != "" {
+		if matchId, err := strconv.Atoi(matchIdStr); err == nil {
+			if match, err := web.arena.Database.GetMatchById(matchId); err == nil && match.Type == model.Practice {
+				editMatchTime = match.Time.Format("2006-01-02T15:04")
+			}
+		}
+	}
+
 	data := struct {
-		EventSettings *model.EventSettings
-		Matches       []model.Match
-		Teams         map[int]*model.Team
+		EventSettings  *model.EventSettings
+		Matches        []model.Match
+		Teams          map[int]*model.Team
+		MatchTimeValue string
 	}{
-		EventSettings: web.arena.EventSettings,
-		Matches:       matches,
-		Teams:         teamMap,
+		EventSettings:  web.arena.EventSettings,
+		Matches:        matches,
+		Teams:          teamMap,
+		MatchTimeValue: editMatchTime,
 	}
 
 	err = template.ExecuteTemplate(w, "base", data)
@@ -116,20 +134,25 @@ func (web *Web) editPracticeMatchHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Parse team numbers
-	red1, _ := strconv.Atoi(r.FormValue("red1"))
-	red2, _ := strconv.Atoi(r.FormValue("red2"))
-	red3, _ := strconv.Atoi(r.FormValue("red3"))
-	blue1, _ := strconv.Atoi(r.FormValue("blue1"))
-	blue2, _ := strconv.Atoi(r.FormValue("blue2"))
-	blue3, _ := strconv.Atoi(r.FormValue("blue3"))
+	match.Red1 = parseTeam(r.FormValue("red1"))
+	match.Red2 = parseTeam(r.FormValue("red2"))
+	match.Red3 = parseTeam(r.FormValue("red3"))
+	match.Blue1 = parseTeam(r.FormValue("blue1"))
+	match.Blue2 = parseTeam(r.FormValue("blue2"))
+	match.Blue3 = parseTeam(r.FormValue("blue3"))
 
-	match.Red1 = red1
-	match.Red2 = red2
-	match.Red3 = red3
-	match.Blue1 = blue1
-	match.Blue2 = blue2
-	match.Blue3 = blue3
+	// Parse and set new match time
+	timeStr := r.FormValue("matchTime")
+	if timeStr != "" {
+		parsedTime, err := time.Parse("2006-01-02T15:04", timeStr) // HTML datetime-local format
+		if err != nil {
+			http.Error(w, "Invalid match time format", http.StatusBadRequest)
+			return
+		}
+		match.Time = parsedTime
+	}
 
+	// Save match
 	err = web.arena.Database.UpdateMatch(match)
 	if err != nil {
 		http.Error(w, "Failed to update match", http.StatusInternalServerError)

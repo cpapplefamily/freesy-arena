@@ -223,16 +223,16 @@ func (arena *Arena) generateMatchTimingMessage() any {
 
 func (arena *Arena) generatePlcCoilsMessage() any {
 	// Get the current state of all PLC coils.
-    coilsArray := arena.Plc.GetAllCoils()
-    coilsArrayNames := arena.Plc.GetCoilNames()
+	coilsArray := arena.Plc.GetAllCoils()
+	coilsArrayNames := arena.Plc.GetCoilNames()
 
 	// Build a map pairing coil names with their values.
-    coilsMap := make(map[string]bool)
-    for i, name := range coilsArrayNames {
-        if i < len(coilsArray) {
-            coilsMap[name] = coilsArray[i]
-        }
-    }
+	coilsMap := make(map[string]bool)
+	for i, name := range coilsArrayNames {
+		if i < len(coilsArray) {
+			coilsMap[name] = coilsArray[i]
+		}
+	}
 	return coilsMap
 }
 

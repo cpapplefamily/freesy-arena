@@ -4,10 +4,11 @@
 package web
 
 import (
+	"testing"
+
 	"github.com/Team254/cheesy-arena/websocket"
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestWallDisplay(t *testing.T) {

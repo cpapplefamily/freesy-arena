@@ -1,0 +1,129 @@
+no service password-encryption
+!
+hostname FreezyISR
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$IL80$VRxQJHynFJz1.9yKJn8jl1
+!
+no aaa new-model
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+cts logging verbose
+!
+!
+license udi pid CISCO1921/K9 sn FTX19028485
+!
+!
+username root password 0 1234Five
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+interface Embedded-Service-Engine0/0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/0
+ ip address 10.0.100.3 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 10.0.11.4 255.255.255.0
+!
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 10.0.9.4 255.255.255.0
+!
+interface GigabitEthernet0/0.30
+ encapsulation dot1Q 30
+ ip address 10.0.17.4 255.255.255.0
+!
+interface GigabitEthernet0/0.40
+ encapsulation dot1Q 40
+ ip address 10.0.2.4 255.255.255.0
+!
+interface GigabitEthernet0/0.50
+ encapsulation dot1Q 50
+ ip address 10.0.19.4 255.255.255.0
+!
+interface GigabitEthernet0/0.60
+ encapsulation dot1Q 60
+ ip address 10.0.7.4 255.255.255.0
+!
+interface GigabitEthernet0/1
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/0/0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/1/0
+ no ip address
+!
+interface GigabitEthernet0/1/1
+ no ip address
+!
+interface GigabitEthernet0/1/2
+ no ip address
+!
+interface GigabitEthernet0/1/3
+ no ip address
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+ip route 0.0.0.0 0.0.0.0 10.0.100.1
+!
+!
+!
+control-plane
+!
+!
+ip access-list extended DS-FMS
+ permit udp any eq 1145 10.0.100.0 0.0.0.255 eq 1160
+ permit tcp any 10.0.100.0 0.0.0.255 eq 1750
+ permit icmp any 10.0.100.0 0.0.0.255
+ permit icmp any 10.0.0.4 0.255.255.0
+ permit udp any any eq bootpc
+ permit udp any any eq bootps
+!
+!
+line con 0
+line vty 0 4
+ password 1234Five
+ logging synchronous
+ login
+ transport input telnet
+!
+scheduler allocate 20000 1000
+!
+end

@@ -102,12 +102,16 @@ var handleArenaStatus = function (data) {
     blinkInterval = null;
   }
 
-  // A/E-stop highlighting (copied from match_play.js)
+
+  // Flash driver station display when A-Stopped or solid orange when E-Stopped
+  // Make sure match is not in progress to prevent flashing during match
   $("#match").removeClass("solid-orange blink-orange");
-  if (stationStatus.EStop) {
+  if (stationStatus.EStop && data.MatchState==0) {
     $("#match").addClass("solid-orange"); // E-stop: solid orange
-  } else if (stationStatus.AStop) {
+    console.log("E-Stopped")
+  } else if (stationStatus.AStop && data.MatchState==0) {
     $("#match").addClass("blink-orange"); // A-stop: blinking orange
+    console.log("A-Stopped")
   }
 };
 

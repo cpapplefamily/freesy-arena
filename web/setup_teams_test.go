@@ -5,12 +5,13 @@ package web
 
 import (
 	"fmt"
-	"github.com/Team254/cheesy-arena/model"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/Team254/cheesy-arena/model"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetupTeams(t *testing.T) {

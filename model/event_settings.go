@@ -15,50 +15,51 @@ const (
 )
 
 type EventSettings struct {
-	Id                          int `db:"id"`
-	Name                        string
-	PlayoffType                 PlayoffType
-	NumPlayoffAlliances         int
-	SelectionRound2Order        string
-	SelectionRound3Order        string
-	SelectionShowUnpickedTeams  bool
-	TbaDownloadEnabled          bool
-	TbaPublishingEnabled        bool
-	TbaEventCode                string
-	TbaSecretId                 string
-	TbaSecret                   string
-	NexusEnabled                bool
-	NetworkSecurityEnabled      bool
-	ApAddress                   string
-	ApPassword                  string
-	ApChannel                   int
-	SwitchAddress               string
-	SwitchPassword              string
-	PlcAddress                  string
-	AlternateIOEnabled          bool
-	ScoreTableEstopAddress  		string
+	Id                              int `db:"id"`
+	Name                            string
+	PlayoffType                     PlayoffType
+	NumPlayoffAlliances             int
+	SelectionRound2Order            string
+	SelectionRound3Order            string
+	SelectionShowUnpickedTeams      bool
+	TbaDownloadEnabled              bool
+	TbaPublishingEnabled            bool
+	TbaEventCode                    string
+	TbaSecretId                     string
+	TbaSecret                       string
+	NexusEnabled                    bool
+	NetworkSecurityEnabled          bool
+	ApAddress                       string
+	ApPassword                      string
+	ApChannel                       int
+	SwitchAddress                   string
+	SwitchPassword                  string
+	SwitchVendor                    string
+	PlcAddress                      string
+	AlternateIOEnabled              bool
+	ScoreTableEstopAddress          string
 	RedAllianceStationEstopAddress  string
 	BlueAllianceStationEstopAddress string
-	AdminPassword               string
-	TeamSignRed1Id              int
-	TeamSignRed2Id              int
-	TeamSignRed3Id              int
-	TeamSignRedTimerId          int
-	TeamSignBlue1Id             int
-	TeamSignBlue2Id             int
-	TeamSignBlue3Id             int
-	TeamSignBlueTimerId         int
-	UseLiteUdpPort              bool
-	BlackmagicAddresses         string
-	WarmupDurationSec           int
-	AutoDurationSec             int
-	PauseDurationSec            int
-	TeleopDurationSec           int
-	WarningRemainingDurationSec int
-	AutoBonusCoralThreshold     int
-	CoralBonusPerLevelThreshold int
-	CoralBonusCoopEnabled       bool
-	BargeBonusPointThreshold    int
+	AdminPassword                   string
+	TeamSignRed1Id                  int
+	TeamSignRed2Id                  int
+	TeamSignRed3Id                  int
+	TeamSignRedTimerId              int
+	TeamSignBlue1Id                 int
+	TeamSignBlue2Id                 int
+	TeamSignBlue3Id                 int
+	TeamSignBlueTimerId             int
+	UseLiteUdpPort                  bool
+	BlackmagicAddresses             string
+	WarmupDurationSec               int
+	AutoDurationSec                 int
+	PauseDurationSec                int
+	TeleopDurationSec               int
+	WarningRemainingDurationSec     int
+	AutoBonusCoralThreshold         int
+	CoralBonusPerLevelThreshold     int
+	CoralBonusCoopEnabled           bool
+	BargeBonusPointThreshold        int
 }
 
 func (database *Database) GetEventSettings() (*EventSettings, error) {

@@ -1,0 +1,21 @@
+/* General Card Header Styles */
+.freezy-card-header {
+    padding: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-align: center;
+    color: white; /* Default text color */
+}
+
+/* Custom Header Colors */
+.freezy-card-header.bg-header {
+    background-color: #2bff00b4 !important;
+}
+
+.freezy-card-header.bg-schedule {
+    background-color: #ff0707 !important; 
+}
+
+.freezy-card-header.bg-editorpane {
+    background-color: #172fb8 !important; 
+}

@@ -6,10 +6,11 @@
 package web
 
 import (
+	"net/http"
+
 	"github.com/Team254/cheesy-arena/game"
 	"github.com/Team254/cheesy-arena/model"
 	"github.com/Team254/cheesy-arena/websocket"
-	"net/http"
 )
 
 // Renders the audience display to be chroma keyed over the video feed.

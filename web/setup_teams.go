@@ -8,13 +8,14 @@ package web
 import (
 	"bytes"
 	"fmt"
-	"github.com/Team254/cheesy-arena/model"
-	"github.com/dchest/uniuri"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Team254/cheesy-arena/model"
+	"github.com/dchest/uniuri"
 )
 
 const wpaKeyLength = 8
