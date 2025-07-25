@@ -7,11 +7,12 @@ package plc
 
 import (
 	"fmt"
-	"github.com/Team254/cheesy-arena/websocket"
-	"github.com/goburrow/modbus"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/Team254/cheesy-arena/websocket"
+	"github.com/goburrow/modbus"
 )
 
 type Plc interface {
@@ -38,7 +39,8 @@ type Plc interface {
 	//Freezy Arena
 	SetAlternateIOStopState(input int, state bool)
 	ResetEstops()
-	GetAllCoils() ([coilCount]bool)
+	GetAllCoils() [coilCount]bool
+	GetFieldStackLight() (bool, bool, bool, bool)
 }
 
 type ModbusPlc struct {
@@ -488,4 +490,8 @@ func (plc *ModbusPlc) ResetEstops(){
 // Returns the value of all PLC coils.
 func (plc *ModbusPlc) GetAllCoils() [coilCount]bool {
     return plc.coils
+}
+
+func (plc *ModbusPlc) GetFieldStackLight() (bool, bool, bool, bool) {
+	return plc.coils[stackLightRed], plc.coils[stackLightBlue], plc.coils[stackLightOrange], plc.coils[stackLightGreen]
 }
