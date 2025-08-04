@@ -4,12 +4,34 @@ import (
 	"github.com/mochi-mqtt/server/v2"
 	"github.com/mochi-mqtt/server/v2/hooks/auth"
 	"github.com/mochi-mqtt/server/v2/listeners"
+	"github.com/mochi-mqtt/server/v2/packets"
 	"log"
 )
 
 // Broker holds the MQTT server instance.
 type Broker struct {
 	server *mqtt.Server
+}
+
+// loggingHook is a custom hook to log received messages.
+type loggingHook struct {
+	mqtt.HookBase
+}
+
+// ID returns the hook identifier.
+func (h *loggingHook) ID() string {
+	return "logging-hook"
+}
+
+// Provides indicates which hook methods are implemented.
+func (h *loggingHook) Provides(b byte) bool {
+	return b == mqtt.OnPublish
+}
+
+// OnPublish logs the received MQTT message.
+func (h *loggingHook) OnPublish(cl *mqtt.Client, pk packets.Packet) (packets.Packet, error) {
+	log.Printf("Received message on topic '%s': %s", pk.TopicName, string(pk.Payload))
+	return pk, nil
 }
 
 // NewBroker creates and configures a new MQTT broker.
@@ -19,6 +41,9 @@ func NewBroker() *Broker {
 
 	// Allow all connections (no authentication for simplicity)
 	_ = server.AddHook(new(auth.AllowHook), nil)
+
+	// Add custom logging hook
+	_ = server.AddHook(new(loggingHook), nil)
 
 	// Create a TCP listener configuration
 	tcpConfig := listeners.Config{
