@@ -10,11 +10,14 @@ import (
 	"log"
 )
 
-// RequestPayload defines the structure of the eStop state payload.
-type RequestPayload struct {
+// RequestEstopPayload defines the structure for the freezy/eStopState topic payload.
+type RequestEstopPayload struct {
 	Channel int  `json:"channel"`
 	State   bool `json:"state"`
 }
+
+// TopicHandler defines a function type for handling MQTT messages for a specific topic.
+type TopicHandler func(arena *field.Arena, payload json.RawMessage) error
 
 // Broker holds the MQTT server instance and arena reference.
 type Broker struct {
@@ -22,10 +25,11 @@ type Broker struct {
 	arena  *field.Arena
 }
 
-// loggingHook is a custom hook to log messages and handle eStop state updates.
+// loggingHook is a custom hook to log messages and handle specific topics.
 type loggingHook struct {
 	mqtt.HookBase
-	arena *field.Arena
+	arena   *field.Arena
+	handlers map[string]TopicHandler
 }
 
 // ID returns the hook identifier.
@@ -38,21 +42,17 @@ func (h *loggingHook) Provides(b byte) bool {
 	return b == mqtt.OnPublish
 }
 
-// OnPublish logs messages and processes eStop state updates for freezy/eStopState.
+// OnPublish logs messages and processes specific topics.
 func (h *loggingHook) OnPublish(cl *mqtt.Client, pk packets.Packet) (packets.Packet, error) {
 	log.Printf("Received message on topic '%s': %s", pk.TopicName, string(pk.Payload))
 
-	if pk.TopicName == "freezy/eStopState" && h.arena != nil {
-		var payload []RequestPayload
-		if err := json.Unmarshal(pk.Payload, &payload); err != nil {
-			log.Printf("Failed to parse eStop payload: %v", err)
-			return pk, nil // Continue processing the message
+	// Look up handler for the topic
+	if handler, exists := h.handlers[pk.TopicName]; exists && h.arena != nil {
+		if err := handler(h.arena, pk.Payload); err != nil {
+			log.Printf("Failed to process topic '%s': %v", pk.TopicName, err)
+		} else {
+			log.Printf("Successfully processed topic '%s'", pk.TopicName)
 		}
-
-		for _, item := range payload {
-			h.arena.Plc.SetAlternateIOStopState(item.Channel, item.State)
-		}
-		log.Printf("eStop state updated successfully for %d channels", len(payload))
 	}
 
 	return pk, nil
@@ -66,8 +66,38 @@ func NewBroker(arena *field.Arena) *Broker {
 	// Allow all connections (no authentication for simplicity)
 	_ = server.AddHook(new(auth.AllowHook), nil)
 
-	// Add custom logging hook with arena reference
-	_ = server.AddHook(&loggingHook{arena: arena}, nil)
+	// Define topic handlers
+	handlers := map[string]TopicHandler{
+		"freezy/eStopState": func(arena *field.Arena, payload json.RawMessage) error {
+			var eStopPayload []RequestEstopPayload
+			if err := json.Unmarshal(payload, &eStopPayload); err != nil {
+				return err
+			}
+			for _, item := range eStopPayload {
+				arena.Plc.SetAlternateIOStopState(item.Channel, item.State)
+			}
+			log.Printf("eStop state updated successfully for %d channels", len(eStopPayload))
+			return nil
+		},
+		// TEMPLATE: Add new topic handlers here
+		// "<topic_name>": func(arena *field.Arena, payload json.RawMessage) error {
+		//     // Define your payload structure if needed
+		//     type CustomPayload struct {
+		//         Field string `json:"field"`
+		//         // Add other fields
+		//     }
+		//     var customPayload CustomPayload
+		//     if err := json.Unmarshal(payload, &customPayload); err != nil {
+		//         return err
+		//     }
+		//     // Add logic to process payload, e.g., call arena methods
+		//     log.Printf("Processed topic '%s' with payload: %v", "<topic_name>", customPayload)
+		//     return nil
+		// },
+	}
+
+	// Add custom logging hook with arena and handlers
+	_ = server.AddHook(&loggingHook{arena: arena, handlers: handlers}, nil)
 
 	// Create a TCP listener configuration
 	tcpConfig := listeners.Config{
