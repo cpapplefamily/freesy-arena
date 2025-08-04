@@ -1,6 +1,8 @@
 package mqtt
 
 import (
+	"encoding/json"
+	"github.com/Team254/cheesy-arena/field"
 	"github.com/mochi-mqtt/server/v2"
 	"github.com/mochi-mqtt/server/v2/hooks/auth"
 	"github.com/mochi-mqtt/server/v2/listeners"
@@ -8,14 +10,22 @@ import (
 	"log"
 )
 
-// Broker holds the MQTT server instance.
-type Broker struct {
-	server *mqtt.Server
+// RequestPayload defines the structure of the eStop state payload.
+type RequestPayload struct {
+	Channel int  `json:"channel"`
+	State   bool `json:"state"`
 }
 
-// loggingHook is a custom hook to log received messages.
+// Broker holds the MQTT server instance and arena reference.
+type Broker struct {
+	server *mqtt.Server
+	arena  *field.Arena
+}
+
+// loggingHook is a custom hook to log messages and handle eStop state updates.
 type loggingHook struct {
 	mqtt.HookBase
+	arena *field.Arena
 }
 
 // ID returns the hook identifier.
@@ -28,22 +38,36 @@ func (h *loggingHook) Provides(b byte) bool {
 	return b == mqtt.OnPublish
 }
 
-// OnPublish logs the received MQTT message.
+// OnPublish logs messages and processes eStop state updates for freezy/eStopState.
 func (h *loggingHook) OnPublish(cl *mqtt.Client, pk packets.Packet) (packets.Packet, error) {
 	log.Printf("Received message on topic '%s': %s", pk.TopicName, string(pk.Payload))
+
+	if pk.TopicName == "freezy/eStopState" && h.arena != nil {
+		var payload []RequestPayload
+		if err := json.Unmarshal(pk.Payload, &payload); err != nil {
+			log.Printf("Failed to parse eStop payload: %v", err)
+			return pk, nil // Continue processing the message
+		}
+
+		for _, item := range payload {
+			h.arena.Plc.SetAlternateIOStopState(item.Channel, item.State)
+		}
+		log.Printf("eStop state updated successfully for %d channels", len(payload))
+	}
+
 	return pk, nil
 }
 
-// NewBroker creates and configures a new MQTT broker.
-func NewBroker() *Broker {
+// NewBroker creates and configures a new MQTT broker with arena reference.
+func NewBroker(arena *field.Arena) *Broker {
 	// Create a new MQTT server
 	server := mqtt.New(nil)
 
 	// Allow all connections (no authentication for simplicity)
 	_ = server.AddHook(new(auth.AllowHook), nil)
 
-	// Add custom logging hook
-	_ = server.AddHook(new(loggingHook), nil)
+	// Add custom logging hook with arena reference
+	_ = server.AddHook(&loggingHook{arena: arena}, nil)
 
 	// Create a TCP listener configuration
 	tcpConfig := listeners.Config{
@@ -57,7 +81,7 @@ func NewBroker() *Broker {
 		log.Fatalf("Failed to add MQTT listener: %v", err)
 	}
 
-	return &Broker{server: server}
+	return &Broker{server: server, arena: arena}
 }
 
 // Start begins the MQTT broker in a goroutine.
