@@ -208,7 +208,7 @@ func (arena *Arena) GenerateMatchLoadMessage() any {
 		BreakDescription  string
 	}{
 		arena.CurrentMatch,
-		arena.CurrentMatch.ShouldAllowSubstitution(),
+		arena.CurrentMatch.ShouldAllowSubstitution(arena.EventSettings),
 		isReplay,
 		teams,
 		rankings,

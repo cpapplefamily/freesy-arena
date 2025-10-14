@@ -92,6 +92,7 @@ type EventSettings struct {
 	CoralBonusCoopEnabled           bool
 	BargeBonusPointThreshold        int
 	FlashDSEnabled                  bool
+	AllowQualificationSubstitutions bool
 }
 
 func (database *Database) GetEventSettings() (*EventSettings, error) {

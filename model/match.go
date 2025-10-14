@@ -125,8 +125,8 @@ func (match *Match) IsComplete() bool {
 }
 
 // Returns true if the match is of a type that allows substitution of teams.
-func (match *Match) ShouldAllowSubstitution() bool {
-	return match.Type != Qualification
+func (match *Match) ShouldAllowSubstitution(eventSettings *EventSettings) bool {
+	return match.Type != Qualification || eventSettings.AllowQualificationSubstitutions
 }
 
 // Returns true if the match is of a type that allows loading lineup information from Nexus.

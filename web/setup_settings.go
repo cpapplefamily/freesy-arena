@@ -131,6 +131,7 @@ func (web *Web) settingsPostHandler(w http.ResponseWriter, r *http.Request) {
 	eventSettings.BlueAllianceStationEstopAddress = r.PostFormValue("BlueAllianceStationEstopAddress")
 	eventSettings.LogoSuffix = r.PostFormValue("logosuffix")
 	eventSettings.FlashDSEnabled = r.PostFormValue("flashDSEnabled") == "on"
+	eventSettings.AllowQualificationSubstitutions = r.PostFormValue("allowQualificationSubstitutions") == "on"
 
 	err := web.arena.Database.UpdateEventSettings(eventSettings)
 	if err != nil {

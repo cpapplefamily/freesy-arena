@@ -146,6 +146,18 @@ UI for configuring event settings.
               </div>
             </fieldset>
             <fieldset class="mb-4">
+              <legend>Open Scrimmage Settings</legend>
+              <div class="row mb-3">
+                <label class="col-lg-6 control-label" for="selectionShowUnpickedTeams">
+                   Allow Qualification Match Substitutions
+                </label>
+                <div class="col-lg-1 checkbox">
+                  <input type="checkbox" id="allowQualificationSubstitutions"
+                    name="allowQualificationSubstitutions" {{if .AllowQualificationSubstitutions}} checked{{end}}>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset class="mb-4">
               <legend>Team Info Download</legend>
               <div class="row mb-3">
                 <label class="col-lg-6 control-label" for="tbaDownloadEnabled">
@@ -372,7 +384,7 @@ UI for configuring event settings.
                 </label>
                 <div class="col-lg-1 checkbox">
                   <input type="checkbox" id="alternateIOEnabled"
-                    name="alternateIOEnabled"{{if .AlternateIOEnabled}} checked{{end}}>
+                  name="alternateIOEnabled"{{if .AlternateIOEnabled}} checked{{end}}>
                 </div>
               </div>
               <div class="row mb-3">
