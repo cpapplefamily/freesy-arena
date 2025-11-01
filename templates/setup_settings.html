@@ -57,12 +57,26 @@ UI for configuring event settings.
                 </div>
               </div>
               <div>Logo Suffix</div>
-              <div class="row mb-3" >
-                <label class="col-lg-6 control-label">Enter suffix used to load alterntive Logo files</label>
-                <div class="col-lg-6">
-                  <input type="text" class="form-control" name="logosuffix" value="{{.LogoSuffix}}" placeholder="{{.LogoSuffix}}">
+                <div class="row mb-3">
+                  <label class="col-lg-6 control-label">
+                    Enter suffix used to load alternative Logo files
+                  </label>
+                  <div class="col-lg-6 position-relative">
+                    <input type="text"
+                          class="form-control"
+                          name="logosuffix"
+                          list="logoSuffixDatalist"
+                          value="{{.LogoSuffix}}"
+                          placeholder="{{.LogoSuffix}}"
+                          style="background: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22%3E%3Cpath fill=%22%236c757d%22 d=%22M2 4l4 4 4-4z%22/%3E%3C/svg%3E') no-repeat right 0.75rem center; background-size: 12px; padding-right: 2.5rem;">
+
+                    <datalist id="logoSuffixDatalist">
+                      {{range .LogoSuffixes}}
+                      <option value="{{.}}">
+                      {{end}}
+                    </datalist>
+                  </div>
                 </div>
-              </div>
               <div class="row mb-3">
                 <label class="col-lg-6 control-label">Playoff Type</label>
                 <div class="col-lg-6">

@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/Team254/cheesy-arena/model"
+	"path/filepath"
 )
 
 // Shows the event settings editing page.
@@ -399,15 +400,28 @@ func (web *Web) settingsPublishTeamsHandler(w http.ResponseWriter, r *http.Reque
 }
 
 func (web *Web) renderSettings(w http.ResponseWriter, r *http.Request, errorMessage string) {
+	logoSuffixes := []string{}
+	matches, _ := filepath.Glob(filepath.Join("static", "img", "game-logo*.png"))
+	for _, path := range matches {
+		base := filepath.Base(path)                     // e.g. "game-logo_dark.png"
+		suffix := strings.TrimPrefix(base, "game-logo") // "_dark"
+		suffix = strings.TrimSuffix(suffix, ".png")     // "dark"
+		if suffix != "" && suffix != base {            // ignore a plain "game-logo.png"
+			logoSuffixes = append(logoSuffixes, suffix)
+		}
+	}
+
 	template, err := web.parseFiles("templates/setup_settings.html", "templates/base.html")
 	if err != nil {
 		handleWebErr(w, err)
 		return
 	}
+
 	data := struct {
 		*model.EventSettings
 		ErrorMessage string
-	}{web.arena.EventSettings, errorMessage}
+		LogoSuffixes   []string
+	}{web.arena.EventSettings, errorMessage, logoSuffixes}
 	err = template.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		handleWebErr(w, err)
