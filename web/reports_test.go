@@ -23,10 +23,10 @@ func TestRankingsCsvReport(t *testing.T) {
 	recorder := web.getHttpResponse("/reports/csv/rankings")
 	assert.Equal(t, 200, recorder.Code)
 	assert.Equal(t, "text/plain", recorder.Header()["Content-Type"][0])
-	expectedBody1 := "Rank,TeamId,RankingPoints,CoopertitionPoints,MatchPoints,AutoPoints,BargePoints,Wins,Losses," +
-		"Ties,Disqualifications,Played\r\n1,254,20,625,90,554,12,3,2,1,0,10\r\n2,1114,18,700,625,90,23,1,3,2,0,10\r\n\r\n"
-	expectedBody2 := "Rank,TeamId,RankingPoints,CoopertitionPoints,MatchPoints,AutoPoints,BargePoints,Wins,Losses," +
-		"Ties,Disqualifications,Played\n1,254,20,625,90,554,12,3,2,1,0,10\n2,1114,18,700,625,90,23,1,3,2,0,10\n\n"
+	expectedBody1 := "Rank,TeamId,AverageRankingPoints,RankingPoints,CoopertitionPoints,MatchPoints,AutoPoints,BargePoints,Wins,Losses," +
+		"Ties,Disqualifications,Played\r\n1,254,2,20,625,90,554,12,3,2,1,0,10\r\n2,1114,1.8,18,700,625,90,23,1,3,2,0,10\r\n\r\n"
+	expectedBody2 := "Rank,TeamId,AverageRankingPoints,RankingPoints,CoopertitionPoints,MatchPoints,AutoPoints,BargePoints,Wins,Losses," +
+		"Ties,Disqualifications,Played\n1,254,2,20,625,90,554,12,3,2,1,0,10\n2,1114,1.8,18,700,625,90,23,1,3,2,0,10\n\n"
 	//assert.Equal(t, expectedBody, recorder.Body.String())
 	if recorder.Body.String() != expectedBody1 && recorder.Body.String() != expectedBody2 {
         t.Errorf("Unexpected body: %s", recorder.Body.String())
