@@ -131,6 +131,7 @@ func (web *Web) settingsPostHandler(w http.ResponseWriter, r *http.Request) {
 	eventSettings.BlueAllianceStationEstopAddress = r.PostFormValue("BlueAllianceStationEstopAddress")
 	eventSettings.LogoSuffix = r.PostFormValue("logosuffix")
 	eventSettings.FlashDSEnabled = r.PostFormValue("flashDSEnabled") == "on"
+	eventSettings.RedOnRight = r.PostFormValue("redOnRight") == "on" // New: Handle the checkbox value.
 
 	err := web.arena.Database.UpdateEventSettings(eventSettings)
 	if err != nil {

@@ -92,6 +92,7 @@ type EventSettings struct {
 	CoralBonusCoopEnabled           bool
 	BargeBonusPointThreshold        int
 	FlashDSEnabled                  bool
+	RedOnRight                      bool // New field: True if Red Alliance is to the right of the main camera perspective.
 }
 
 func (database *Database) GetEventSettings() (*EventSettings, error) {
@@ -126,6 +127,7 @@ func (database *Database) GetEventSettings() (*EventSettings, error) {
 		CoralBonusPerLevelThreshold: game.CoralBonusPerLevelThreshold,
 		CoralBonusCoopEnabled:       game.CoralBonusCoopEnabled,
 		BargeBonusPointThreshold:    game.BargeBonusPointThreshold,
+		RedOnRight:                  true, // New default: true (Red on right by default).
 	}
 
 	if err := database.eventSettingsTable.create(&eventSettings); err != nil {

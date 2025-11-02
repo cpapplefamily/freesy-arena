@@ -548,6 +548,22 @@ UI for configuring event settings.
                   <input type="text" class="form-control" name="blackmagicAddresses" value="{{.BlackmagicAddresses}}">
                 </div>
               </div>
+              <div class="row mb-3">
+                <label class="col-lg-6 control-label" for="redOnRight">
+                  Red Alliance to the Right of Main Camera Perspective
+                </label>
+                <div class="col-lg-6">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="redOnRight" name="redOnRight" {{if .RedOnRight}}checked{{end}}>
+                  </div>
+                  <small class="form-text text-muted">
+                    <strong>Only affects new Audience Display instances.</strong><br>
+                    • When enabled, newly opened audience displays will show <strong>Red on the right</strong> and <strong>Blue on the left</strong>.<br>
+                    • Existing display windows/tabs will <strong>retain their current layout</strong><br>
+                    • To apply this setting, open a <strong>new browser tab</strong> or double click on the audience display window to flip the layout.
+                  </small>
+                </div>
+              </div>
             </fieldset>
             <fieldset class="mb-4">
               <legend>Alliance Station Enhancements</legend>
