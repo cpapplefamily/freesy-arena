@@ -338,8 +338,11 @@ func TestAllianceSelectionWebsocket(t *testing.T) {
 	assert.Equal(t, true, allianceSelectionMessage.ShowTimer)
 	ws.Write("stopTimer", nil)
 	assert.Nil(t, mapstructure.Decode(readWebsocketType(t, ws, "allianceSelection"), &allianceSelectionMessage))
+	assert.Equal(t, true, allianceSelectionMessage.ShowTimer)
+	ws.Write("hideTimer", nil)
+	assert.Nil(t, mapstructure.Decode(readWebsocketType(t, ws, "allianceSelection"), &allianceSelectionMessage))
 	assert.Equal(t, false, allianceSelectionMessage.ShowTimer)
-	ws.Write("startTimer", nil)
+	ws.Write("restartTimer", nil)
 	assert.Nil(t, mapstructure.Decode(readWebsocketType(t, ws, "allianceSelection"), &allianceSelectionMessage))
 	assert.Equal(t, true, allianceSelectionMessage.ShowTimer)
 }
