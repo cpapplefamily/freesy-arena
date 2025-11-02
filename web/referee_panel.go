@@ -223,6 +223,19 @@ func (web *Web) refereePanelWebsocketHandler(w http.ResponseWriter, r *http.Requ
 			web.arena.AllianceStationDisplayMode = "fieldReset"
 			web.arena.AllianceStationDisplayModeNotifier.Notify()
 			web.arena.ScoringStatusNotifier.Notify()
+		case "startTimeout":
+			durationSec, ok := data.(float64)
+			if !ok {
+				ws.WriteError(fmt.Sprintf("Failed to parse '%s' message.", messageType))
+				continue
+			}
+			err = web.arena.StartTimeout("Be Prompt Timer", int(durationSec))
+			if err != nil {
+				ws.WriteError(err.Error())
+				continue
+			}
+			web.arena.AudienceDisplayMode = "timeout"
+    		web.arena.AudienceDisplayModeNotifier.Notify()
 		default:
 			ws.WriteError(fmt.Sprintf("Invalid message type '%s'.", messageType))
 		}

@@ -26,6 +26,13 @@ UI for entering and tracking fouls and red/yellow cards.
       <div class="scoring-status" id="blueNearScoreStatus"></div>
       <div class="scoring-status" id="blueFarScoreStatus"></div>
     </div>
+    <div id="timeoutSection" class="headRef-dependent">
+      <h6>Be Prompt Timer</h6>
+      <input type="text" id="timeoutDuration" size="4" value="2:00"/>
+      <button type="button" id="startTimeout" onclick="startTimeout();">
+        Start
+      </button>
+    </div>
   </div>
   <div id="fouls">
     <div id="scoreSummary" class="headRef-dependent">

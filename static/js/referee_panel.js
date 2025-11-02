@@ -190,6 +190,16 @@ const hashObject = function (object) {
   return h;
 }
 
+// Sends a websocket message to start the timeout.
+const startTimeout = function () {
+  const duration = $("#timeoutDuration").val().split(":");
+  let durationSec = parseFloat(duration[0]);
+  if (duration.length > 1) {
+    durationSec = durationSec * 60 + parseFloat(duration[1]);
+  }
+  websocket.send("startTimeout", durationSec);
+};
+
 $(function () {
   // Read the configuration for this display from the URL query string.
   var urlParams = new URLSearchParams(window.location.search);
