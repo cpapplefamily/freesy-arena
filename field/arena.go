@@ -187,8 +187,20 @@ func (arena *Arena) LoadSettings() error {
 		settings.NetworkSecurityEnabled,
 		accessPointWifiStatuses,
 	)
-	//arena.networkSwitch = network.NewSwitch(settings.SwitchAddress, settings.SwitchPassword)
-	arena.UnifiSwitch = network.NewUnifiSwitch(settings.SwitchAddress, settings.SwitchPassword)
+	
+	switch settings.NetworkVendor {
+		case "cisco":
+			log.Printf("Configuring Cisco network switch at %s", settings.SwitchAddress)
+			//arena.networkSwitch = network.NewSwitch(settings.SwitchAddress, settings.SwitchPassword)
+			arena.UnifiSwitch = network.NewUnifiSwitch(settings.SwitchAddress, settings.SwitchPassword) //REMOVE THIS LINE AFTER TESTING
+			case "unifi": // optional: treat empty string as Unifi too
+			log.Printf("Configuring Unifi network switch at %s", settings.SwitchAddress)
+			arena.UnifiSwitch = network.NewUnifiSwitch(settings.SwitchAddress, settings.SwitchPassword)
+		default:
+			log.Printf("Unknown network vendor %q, falling back to cisco", settings.NetworkVendor)
+			//arena.networkSwitch = network.NewSwitch(settings.SwitchAddress, settings.SwitchPassword)
+			arena.UnifiSwitch = network.NewUnifiSwitch(settings.SwitchAddress, settings.SwitchPassword) //REMOVE THIS LINE AFTER TESTING
+		}
 	sccUpCommands := strings.Split(settings.SCCUpCommands, "\n")
 	sccDownCommands := strings.Split(settings.SCCDownCommands, "\n")
 	arena.redSCC = network.NewSCCSwitch(

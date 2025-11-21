@@ -115,13 +115,15 @@ func (web *Web) settingsPostHandler(w http.ResponseWriter, r *http.Request) {
 	eventSettings.CoralBonusCoopEnabled = r.PostFormValue("coralBonusCoopEnabled") == "on"
 	eventSettings.BargeBonusPointThreshold, _ = strconv.Atoi(r.PostFormValue("bargeBonusPointThreshold"))
 	eventSettings.IncludeAlgaeInBargeBonus = r.PostFormValue("includeAlgaeInBargeBonus") == "on"
+	
+	eventSettings.NetworkVendor = r.PostFormValue("networkVendor")
 
 	err := web.arena.Database.UpdateEventSettings(eventSettings)
 	if err != nil {
 		handleWebErr(w, err)
 		return
 	}
-
+	
 	// Refresh the arena in case any of the settings changed.
 	err = web.arena.LoadSettings()
 	if err != nil {

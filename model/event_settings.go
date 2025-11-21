@@ -87,6 +87,7 @@ type EventSettings struct {
 	CoralBonusCoopEnabled       bool
 	BargeBonusPointThreshold    int
 	IncludeAlgaeInBargeBonus    bool
+	NetworkVendor			  	string
 }
 
 func (database *Database) GetEventSettings() (*EventSettings, error) {
@@ -120,6 +121,7 @@ func (database *Database) GetEventSettings() (*EventSettings, error) {
 		CoralBonusCoopEnabled:       game.CoralBonusCoopEnabled,
 		BargeBonusPointThreshold:    game.BargeBonusPointThreshold,
 		IncludeAlgaeInBargeBonus:    game.IncludeAlgaeInBargeBonus,
+		NetworkVendor:			  	 "cisco",
 	}
 
 	if err := database.eventSettingsTable.create(&eventSettings); err != nil {
