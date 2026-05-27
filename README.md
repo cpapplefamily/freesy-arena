@@ -1,3 +1,9 @@
+# The Freesy Arena Project has moved to its own account for better management of users and administrators. Please visit https://github.com/Freezy-Arena/freezy-arena for current updates
+
+#
+#
+#
+#
 # Freesy Arena **Under Construction**
 
 Freesy Arena is a fork of the open-source **Cheesy Arena**, developed with permission from its original creators. This version includes enhancements and features not available in the upstream repository, tailored to improve usability and flexibility for competition organizers.
