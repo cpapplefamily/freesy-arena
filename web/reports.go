@@ -62,14 +62,15 @@ func (web *Web) rankingsPdfReportHandler(w http.ResponseWriter, r *http.Request)
 	colWidths := map[string]float64{
 		"Rank":   13,
 		"Team":   20,
-		"RP":     20,
-		"Coop":   20,
+		"Avg RP": 15,
+		"RP":     15,
+		"Coop":   15,
 		"Match":  20,
 		"Auto":   20,
 		"Barge":  20,
 		"W-L-T":  22,
-		"DQ":     20,
-		"Played": 20,
+		"DQ":     15,
+		"Played": 15,
 	}
 	rowHeight := 6.5
 
@@ -82,6 +83,7 @@ func (web *Web) rankingsPdfReportHandler(w http.ResponseWriter, r *http.Request)
 	pdf.CellFormat(195, rowHeight, "Team Standings - "+web.arena.EventSettings.Name, "", 1, "C", false, 0, "")
 	pdf.CellFormat(colWidths["Rank"], rowHeight, "Rank", "1", 0, "C", true, 0, "")
 	pdf.CellFormat(colWidths["Team"], rowHeight, "Team", "1", 0, "C", true, 0, "")
+	pdf.CellFormat(colWidths["Avg RP"], rowHeight, "Avg RP", "1", 0, "C", true, 0, "")
 	pdf.CellFormat(colWidths["RP"], rowHeight, "RP", "1", 0, "C", true, 0, "")
 	pdf.CellFormat(colWidths["Coop"], rowHeight, "Coop", "1", 0, "C", true, 0, "")
 	pdf.CellFormat(colWidths["Match"], rowHeight, "Match", "1", 0, "C", true, 0, "")
@@ -96,6 +98,7 @@ func (web *Web) rankingsPdfReportHandler(w http.ResponseWriter, r *http.Request)
 		pdf.CellFormat(colWidths["Rank"], rowHeight, strconv.Itoa(ranking.Rank), "1", 0, "C", false, 0, "")
 		pdf.SetFont("Arial", "", 10)
 		pdf.CellFormat(colWidths["Team"], rowHeight, strconv.Itoa(ranking.TeamId), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(colWidths["Avg RP"], rowHeight, strconv.FormatFloat(ranking.AverageRankingPoints, 'f', 2, 64), "1", 0, "C", false, 0, "")
 		pdf.CellFormat(colWidths["RP"], rowHeight, strconv.Itoa(ranking.RankingPoints), "1", 0, "C", false, 0, "")
 		pdf.CellFormat(
 			colWidths["Coop"], rowHeight, strconv.Itoa(ranking.CoopertitionPoints), "1", 0, "C", false, 0, "",

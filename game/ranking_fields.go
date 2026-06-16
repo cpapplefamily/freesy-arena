@@ -5,9 +5,13 @@
 
 package game
 
-import "math/rand"
+import (
+	"math/rand"
+	"math"
+)
 
 type RankingFields struct {
+	AverageRankingPoints      float64
 	RankingPoints      int
 	CoopertitionPoints int
 	MatchPoints        int
@@ -61,6 +65,7 @@ func (fields *RankingFields) AddScoreSummary(ownScore *ScoreSummary, opponentSco
 	fields.MatchPoints += ownScore.MatchPoints
 	fields.AutoPoints += ownScore.AutoPoints
 	fields.BargePoints += ownScore.BargePoints
+	fields.AverageRankingPoints = math.Round(float64(fields.RankingPoints) / float64(fields.Played)*100) / 100 
 }
 
 // Helper function to implement the required interface for Sort.
