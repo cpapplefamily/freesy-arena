@@ -245,3 +245,97 @@ h3 {
   text-align: right;
   padding: 0 0.2vw;
 }
+
+/* Timeout Section – Container */
+#timeoutSection {
+  margin-top: 2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.8vw;
+}
+
+/* Label */
+#timeoutSection h6 {
+  margin: 0 0 0.5vw 0;
+  color: #ccc;
+  font-weight: normal;
+}
+
+/* Input field – matches foul buttons style */
+#timeoutDuration {
+  width: 6vw;
+  height: 3.5vw;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 0.3vw;
+  color: #fff;
+  text-align: center;
+  font-size: 1.8vw;
+  margin-bottom: 0.8vw;
+}
+
+
+/* Timeout Section – Full container, centered */
+#timeoutSection {
+  margin-top: .2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;     /* Horizontal center */
+  justify-content: center; /* Vertical center (within flex) */
+  width: 100%;
+  text-align: center;
+  font-size: 1.2vw;
+}
+
+/* Title */
+#timeoutSection h6 {
+  margin: 0 0 0.6vw 0;
+  color: #ccc;
+  font-weight: normal;
+  font-size: 1vw;
+}
+
+/* Input – centered, fixed width */
+#timeoutDuration {
+  width: 6.5vw;
+  height: 2vw;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 0.4vw;
+  color: #fff;
+  text-align: center;
+  font-size: 1vw;
+  font-weight: bold;
+  margin-bottom: 0.8vw;
+  padding: 0;
+}
+
+/* Start Button – centered, full style match */
+#startTimeout {
+  width: 12vw;
+  height: 2.5vw;
+  background-color: #26c;           /* Commit button blue */
+  color: #fff;
+  font-size: 1.5vw;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5vw;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 0.2vw 0.4vw rgba(0,0,0,0.3);
+}
+
+#startTimeout:hover {
+  opacity: 0.85;
+}
+
+#startTimeout:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
