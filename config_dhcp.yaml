@@ -1,0 +1,113 @@
+# Ansible Playbook: Configure custom DHCP file and network interfaces (6 VLANs)
+
+# Example Usage with mixed inputs (null values or empty strings are now allowed in the list):
+# ansible-playbook -e '{"team_numbers": [123, null, "4567", "", 999, 12345]}' config_dhcp.yaml
+#
+- name: Configure custom DHCP file and network interfaces (6 VLANs)
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    # --- Change target file path to a standard location ---
+    target_directory: "/etc/dhcp/dhcpd.conf.d"
+    target_file_path: "/etc/dhcp/dhcpd.conf.d/frc-config.conf"
+    
+    # --- VLAN Configuration Variables ---
+    parent_interface: "eno1"         # Parent physical device name
+    ip_last_octet: "4"               # The last octet of the static IP/router IP for all VLANs
+    # Define the VLAN IDs and corresponding names
+    vlan_configs:
+      - { id: 10, name: "RED1" }
+      - { id: 20, name: "RED2" }
+      - { id: 30, name: "RED3" }
+      - { id: 40, name: "BLUE1" }
+      - { id: 50, name: "BLUE2" }
+      - { id: 60, name: "BLUE3" }
+    # ------------------------------------
+    # Placeholder variable that will hold the calculated subnets
+    subnets_input: [] 
+
+  tasks:
+    - name: Ensure dhcpd config directory exists
+      ansible.builtin.file:
+        path: "{{ target_directory }}"
+        state: directory
+        owner: root
+        group: dhcpd
+        mode: '0755'
+
+    # The assertion for 'team_numbers' length remains, but the filter handles null/empty elements internally.
+    - name: Validate that 'team_numbers' is provided and correct length
+      ansible.builtin.assert:
+        that:
+          - team_numbers is defined
+          - team_numbers | length == 6
+        fail_msg: "team_numbers must be defined as a list of exactly 6 numbers or placeholders."
+
+    - name: Dynamically generate the list of CIDR subnets details from team numbers (filter returns None for empty slots)
+      ansible.builtin.set_fact:
+        subnets_details: "{{ team_numbers | map('generate_subnet_details_filter') | list }}"
+
+    - name: Generate the dhcpd-frc.conf file from template (template skips generation for None entries)
+      ansible.builtin.template:
+        src: templates/dhcpd-frc.conf.j2
+        dest: "{{ target_file_path }}"
+        owner: root
+        group: dhcpd
+        mode: '0640'
+      notify:
+        - Restart dhcpd service
+
+    - name: Check if SELinux is enabled
+      ansible.builtin.command: getenforce
+      changed_when: false
+      failed_when: false
+      register: getenforce_result
+
+    - name: Apply standard SELinux file context (if SELinux is enforcing)
+      ansible.builtin.command: >
+        restorecon -v "{{ target_directory }}"
+      when: getenforce_result.stdout == 'Enforcing'
+      notify:
+        - Restart dhcpd service
+
+    - name: Ensure the custom config file is included in /etc/dhcp/dhcpd.conf
+      ansible.builtin.lineinfile:
+        path: /etc/dhcp/dhcpd.conf
+        line: 'include "{{ target_file_path }}";'
+        state: present
+        regexp: '^#?\s*include\s*["'']{{ target_file_path }}["''];?$'
+      notify:
+        - Restart dhcpd service
+
+    # If a team number was null/empty, 'subnet_details' will contain 'None' for that position.
+    - name: Ensure VLAN interfaces are configured with static IPs where team numbers exist, remove those that don't
+      community.general.nmcli:
+        conn_name: "{{ item.0.name }}"
+        ifname: "{{ item.0.name }}"
+        type: vlan
+        vlandev: "{{ parent_interface }}"
+        state: present
+        vlanid: "{{ item.0.id }}"
+        # Only provide ip4 details if 'item.1' (subnet_details) is not None
+        ip4: "{{ (item.1.base_ip_prefix + '.' + ip_last_octet + '/' + item.1.cidr_prefix|string) if item.1 else [] }}"
+        method4: "{{ 'manual' if item.1 else 'disabled' }}"
+        autoconnect: yes
+      loop: "{{ vlan_configs | zip(subnets_details) | list }}"
+      register: nmcli_status
+
+    # This loop runs the 'up' command only for interfaces where state was changed by nmcli.
+    - name: Activate VLAN interfaces if configured or modified
+      community.general.nmcli:
+        conn_name: "{{ item.0.name }}"
+        state: up
+      loop: "{{ vlan_configs | zip(subnets_details) | list }}"
+      when: 
+        - nmcli_status.changed # Only if the prior task registered a change for this specific interface
+
+  handlers:
+    - name: Restart dhcpd service
+      ansible.builtin.service:
+        name: dhcpd
+        state: restarted
+

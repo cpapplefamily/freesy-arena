@@ -1,0 +1,18 @@
+# Custom DHCP Configuration for FRC Teams
+
+authoritative;
+
+# DHCP options for each subnet
+{% for vlan, subnet in vlan_configs | zip(subnets_details) %}
+{# Check if the subnet details are valid (not None) before proceeding #}
+{% if subnet %}
+# Subnet configuration for VLAN {{ vlan.id }} ({{ vlan.name }})
+subnet {{ subnet.subnet_cidr | ansible.utils.ipaddr('network') }} netmask 255.255.255.0 {
+    option routers {{ subnet.base_ip_prefix }}.{{ ip_last_octet }};
+    option subnet-mask 255.255.255.0;
+    option broadcast-address {{ subnet.broadcast_ip }};
+    range {{ subnet.first_assignable_ip }} {{ subnet.last_assignable_ip }};
+}
+{% endif %}
+{% endfor %}
+

@@ -1,0 +1,34 @@
+---
+- name: Configure sudoers rule for user cheesy
+  # Targets the local machine itself
+  hosts: localhost
+  connection: local
+  become: yes # Use sudo for administrative tasks
+  gather_facts: no # Not strictly needed for this task
+  
+  vars:
+    sudoers_file_path: "/etc/sudoers.d/cheesy_ansible_pb"
+    sudoers_rule: "cheesy ALL=(ALL) NOPASSWD: /usr/bin/ansible-playbook"
+    # NOTE: Verify the path to ansible-playbook on your target systems
+
+  tasks:
+    - name: Ensure the sudoers directory exists (it should by default)
+      ansible.builtin.file:
+        path: "/etc/sudoers.d/"
+        state: directory
+        mode: '0755'
+
+    - name: Add the NOPASSWD rule to a dedicated file in sudoers.d
+      ansible.builtin.lineinfile:
+        path: "{{ sudoers_file_path }}"
+        line: "{{ sudoers_rule }}"
+        create: true             # Create the file if it doesn't exist
+        validate: 'visudo -cf %s' # Validate the syntax using visudo
+        mode: '0440'             # Set secure permissions required by sudo
+
+    - name: Verify that the user cheesy can use the command (optional test)
+      ansible.builtin.command: sudo -u cheesy -n /usr/bin/ansible-playbook --version
+      register: test_result
+      changed_when: false
+      failed_when: test_result.rc != 0 and test_result.rc != 2 # ans-playbook returns 2 on missing PB argument
+      # The above command tests if 'sudo' works without a password prompt (-n)

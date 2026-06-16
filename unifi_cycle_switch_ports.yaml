@@ -1,0 +1,72 @@
+---
+- name: Cycle UniFi Switch Ports
+  hosts: localhost
+  gather_facts: false
+  
+  tasks:
+    - name: Validate required variables are present
+      ansible.builtin.fail:
+        msg: |
+          ERROR: Missing required variables.
+          Please run the playbook using extra vars (-e):
+          
+          ansible-playbook cycle_ports.yml -e 'unifi_controller_url="https://<controller_ip>:8443"' \
+          -e 'unifi_username="<username>"' -e 'unifi_password="<password>"' \
+          -e 'delay_seconds=5' \
+          -e 'ports_to_cycle=[{"switch_name":"Switch A Name", "ports":[1,2,3]}, {"switch_name":"Switch B Name", "ports":[4,5,6]}]'
+      when: 
+        - unifi_controller_url is not defined or unifi_controller_url == ""
+        - unifi_username is not defined or unifi_username == ""
+        - unifi_password is not defined or unifi_password == ""
+        - ports_to_cycle is not defined or ports_to_cycle | length == 0
+      run_once: true
+
+    - name: Disable specified switch ports
+      community.general.unifi_port:
+        controller_url: "{{ unifi_controller_url }}"
+        username: "{{ unifi_username }}"
+        password: "{{ unifi_password }}"
+        site_id: "{{ unifi_site_name | default('default') }}"
+        switch_name: "{{ item.switch_name }}"
+        port_id: "{{ port_num }}" # Now receives a single port number
+        enabled: false
+        validate_certs: false
+      loop: "{{ ports_to_cycle }}"
+      loop_control:
+        loop_var: item
+      vars:
+        # Use an inner loop over the 'ports' list within each 'item'
+        port_num: "{{ inner_item }}"
+      loop_control:
+        # This nested loop will run for every port within every switch definition
+        inner_loop_var: inner_item
+      with_items:
+        - "{{ item.ports }}"
+
+    - name: Wait for the parameterized duration
+      ansible.builtin.wait_for:
+        timeout: "{{ delay_seconds | default(5) }}"
+      delegate_to: localhost
+      run_once: true
+
+    - name: Re-enable specified switch ports
+      community.general.unifi_port:
+        controller_url: "{{ unifi_controller_url }}"
+        username: "{{ unifi_username }}"
+        password: "{{ unifi_password }}"
+        site_id: "{{ unifi_site_name | default('default') }}"
+        switch_name: "{{ item.switch_name }}"
+        port_id: "{{ port_num }}" # Now receives a single port number
+        enabled: true
+        validate_certs: false
+      loop: "{{ ports_to_cycle }}"
+      loop_control:
+        loop_var: item
+      vars:
+        # Use an inner loop over the 'ports' list within each 'item'
+        port_num: "{{ inner_item }}"
+      loop_control:
+        # This nested loop will run for every port within every switch definition
+        inner_loop_var: inner_item
+      with_items:
+        - "{{ item.ports }}"

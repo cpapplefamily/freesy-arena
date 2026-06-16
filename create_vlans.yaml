@@ -1,0 +1,140 @@
+- name: Reset to initial state and configure NetworkManager VLANs
+  hosts: localhost
+  connection: local
+  become: yes
+  gather_facts: no
+
+  vars:
+    parent_interface: "eno1"
+    vlans_to_create:
+      - { name: "RED1", id: 10 }
+      - { name: "RED2", id: 20 }
+      - { name: "RED3", id: 30 }
+      - { name: "BLUE1", id: 40 }
+      - { name: "BLUE2", id: 50 }
+      - { name: "BLUE3", id: 60 }
+      - { name: "Admin", id: 100}
+    macvlans_to_create:
+      - { name: "cheesy_macvlan", parent: "Admin",mode: 2, ip4: "10.0.100.5/24", gw4: "10.0.100.1", dns4: "10.0.100.1"}
+
+    # Define the custom DHCP configuration paths for cleanup
+    target_directory: "/etc/dhcp/dhcpd.conf.d"
+    target_file_path: "{{ target_directory }}/frc-config.conf"
+    main_dhcpd_config: "/etc/dhcp/dhcpd.conf"
+
+  tasks:
+    - name: Stop and disable the dhcpd service
+      ansible.builtin.service:
+        name: dhcpd
+        state: stopped
+        enabled: no
+
+    - name: Remove the custom DHCP configuration file
+      ansible.builtin.file:
+        path: "{{ target_file_path }}"
+        state: absent
+
+    - name: Remove the custom DHCP config directory if it is empty
+      ansible.builtin.file:
+        path: "{{ target_directory }}"
+        state: absent
+
+    - name: Remove the include line from the main dhcpd.conf
+      ansible.builtin.lineinfile:
+        path: "{{ main_dhcpd_config }}"
+        line: 'include "{{ target_file_path }}";'
+        state: absent
+        regexp: '^include ["'']{{ target_file_path }}["''];?$'
+      register: lineinfile_results
+      ignore_errors: yes
+
+    - name: Remove the custom SELinux fcontext for dhcpd config file path
+      ansible.builtin.command: >
+        semanage fcontext -d "{{ target_file_path }}"
+      when: ansible_facts['os_family'] | lower == 'redhat'
+      ignore_errors: yes
+      register: semanage_results
+
+    - name: Restore default SELinux context on cleaned path
+      ansible.builtin.command: >
+        restorecon -v "{{ target_directory }}"
+      when: semanage_results.changed
+      ignore_errors: yes
+
+    - name: Ensure the parent interface ({{ parent_interface }}) is active
+      community.general.nmcli:
+        conn_name: "{{ parent_interface }}"
+        state: up
+        # Add a timeout if the interface takes time to come up
+        # wait: yes
+        # timeout: 30
+
+    - name: Configure and activate VLAN connections using NetworkManager (nmcli)
+      community.general.nmcli:
+        type: vlan
+        conn_name: "{{ item.name }}"
+        ifname: "{{ item.name }}"
+        vlandev: "{{ parent_interface }}"
+        vlanid: "{{ item.id }}"
+        autoconnect: yes
+        state: present
+        ip4: []
+        ip6: []
+        method4: disabled
+        method6: disabled
+      loop: "{{ vlans_to_create }}"
+      register: nmcli_vlan_results
+
+    - name: Activate VLAN connections
+      community.general.nmcli:
+        conn_name: "{{ item.name }}"
+        state: up
+      loop: "{{ vlans_to_create }}"
+
+    - name: Verify NetworkManager connection status for the new interfaces
+      ansible.builtin.debug:
+        msg: "VLAN {{ item.item.name }} (ID {{ item.item.id }}) is configured and active."
+      loop: "{{ nmcli_vlan_results.results }}"
+      when: item.changed or item.skipped is not defined
+
+    - name: Configure and activate macvlan connections using NetworkManager (nmcli)
+      community.general.nmcli:
+        type: macvlan
+        conn_name: "{{ item.name }}"
+        ifname: "{{ item.name }}"
+        macvlan:
+          parent: "{{ item.parent }}"
+          mode: "{{ item.mode }}"
+        ip4: "{{ item.ip4 | default([]) }}"
+        ip6: "{{ item.ip6 | default([]) }}"
+        gw4: "{{ item.gw4 | default() }}"
+        gw6: "{{ item.gw6 | default() }}"
+        dns4: "{{ item.dns4 | default([]) }}"
+        dns6: "{{ item.dns6 | default([]) }}"
+        autoconnect: yes
+        state: present
+        method4: manual
+        method6: disabled
+      loop: "{{ macvlans_to_create }}"
+      register: nmcli_macvlan_results
+
+    - name: Activate macvlan connections
+      community.general.nmcli:
+        conn_name: "{{ item.name }}"
+        state: up
+      loop: "{{ macvlans_to_create }}"
+
+    - name: Verify NetworkManager connection status for the new interfaces
+      ansible.builtin.debug:
+        msg: "MacVlan {{ item.item.name }} (Parent {{ item.item.parent }}) is configured and active."
+      loop: "{{ nmcli_macvlan_results.results }}"
+      when: item.changed or item.skipped is not defined
+
+    - name: Show all active connections managed by NetworkManager
+      ansible.builtin.command: nmcli connection show --active
+      register: active_connections
+      changed_when: false
+
+    - name: Print active connections list
+      ansible.builtin.debug:
+        var: active_connections.stdout_lines
